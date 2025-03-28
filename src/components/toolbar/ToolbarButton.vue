@@ -1,15 +1,21 @@
 <template>
   <button 
+    ref="buttonRef"
     @click="onClick" 
     :class="{ 'is-active': isActive }"
-    :title="title"
   >
     <slot></slot>
   </button>
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import tippy from 'tippy.js'
+import type { Instance as TippyInstance } from 'tippy.js'
+import 'tippy.js/dist/tippy.css'
+import 'tippy.js/themes/light.css'
+
+const props = defineProps<{
   isActive?: boolean
   title?: string
 }>()
@@ -18,9 +24,36 @@ const emit = defineEmits<{
   (e: 'click', event: MouseEvent): void
 }>()
 
+const buttonRef = ref<HTMLElement | null>(null)
+let tippyInstance: TippyInstance | null = null
+
 const onClick = (event: MouseEvent) => {
   emit('click', event)
 }
+
+onMounted(() => {
+  if (buttonRef.value && props.title) {
+    tippyInstance = tippy(buttonRef.value, {
+      content: props.title,
+      placement: 'bottom',
+      arrow: true,
+      theme: 'light',
+      duration: [200, 100]
+    })
+  }
+})
+
+watch(() => props.title, (newTitle) => {
+  if (tippyInstance && newTitle) {
+    tippyInstance.setContent(newTitle)
+  }
+})
+
+onBeforeUnmount(() => {
+  if (tippyInstance) {
+    tippyInstance.destroy()
+  }
+})
 </script>
 
 <style scoped>
