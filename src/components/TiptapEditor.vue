@@ -11,7 +11,6 @@ import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
 import Color from '@tiptap/extension-color'
-import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import 'tippy.js/dist/tippy.css'
 import Table from '@tiptap/extension-table'
@@ -25,6 +24,7 @@ import { FloatingMenu } from '@tiptap/extension-floating-menu'
 import { suggestion, SlashCommandsList, getSuggestionItems } from './slash-commands'
 import type { CommandItem } from './slash-commands'
 import EditorToolbar from './EditorToolbar.vue'
+import { ResizableImage } from './image-extension'
 
 const props = defineProps<{
   modelValue: string
@@ -51,7 +51,12 @@ const editor = useEditor({
     Color.configure({
       types: ['textStyle'],
     }),
-    Image,
+    ResizableImage.configure({
+      inline: true,
+      HTMLAttributes: {
+        class: 'resizable-image',
+      },
+    }),
     Link.configure({
       openOnClick: false,
       HTMLAttributes: {
@@ -101,27 +106,6 @@ const executeSlashCommand = (item: CommandItem) => {
     showSlashCommands.value = false
   }
 }
-
-// 处理粘贴事件
-editor.value?.on('paste', ({ event }) => {
-  const clipboardEvent = event as ClipboardEvent
-  const items = clipboardEvent.clipboardData?.items
-  if (!items) return
-
-  for (const item of items) {
-    if (item.type.indexOf('image') === 0) {
-      clipboardEvent.preventDefault()
-      const file = item.getAsFile()
-      if (file) {
-        const reader = new FileReader()
-        reader.onload = (e) => {
-          editor.value?.chain().focus().setImage({ src: e.target?.result as string }).run()
-        }
-        reader.readAsDataURL(file)
-      }
-    }
-  }
-})
 </script>
 
 <style>
@@ -152,6 +136,18 @@ editor.value?.on('paste', ({ event }) => {
   width: 100%; */
   outline: none;
   padding: 1rem;
+}
+
+/* 调整可调整大小图片样式 */
+.editor-content .node-resizableImage {
+  margin: 1em 0;
+  display: inline-block;
+  max-width: 100%;
+}
+
+/* 确保图片不会超出容器 */
+.editor-content .resizable-image-wrapper {
+  max-width: 100%;
 }
 
 .editor-content p {

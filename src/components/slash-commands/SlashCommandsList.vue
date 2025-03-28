@@ -30,6 +30,7 @@ import {
   MinusSquare,
   Table as TableIcon,
 } from 'lucide-vue-next'
+import '../image-extension' // 导入ResizableImage扩展，确保setResizableImage命令可用
 
 export interface CommandItem {
   title: string
@@ -94,7 +95,7 @@ export const getSuggestionItems = () => [
     command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
       const url = window.prompt('输入图片URL')
       if (url) {
-        editor.chain().focus().deleteRange(range).setImage({ src: url }).run()
+        editor.chain().focus().deleteRange(range).setResizableImage({ src: url }).run()
       }
     },
   },

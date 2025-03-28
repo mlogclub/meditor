@@ -12,7 +12,7 @@ import { Editor } from '@tiptap/core'
 import { LucideImage } from 'lucide-vue-next'
 import ToolbarButton from './ToolbarButton.vue'
 import { TOOLBAR_ICON_SIZE } from '../../constants/editor'
-import { addImage } from '../../utils/editorUtils'
+import { addImage } from '../image-extension'
 
 const props = defineProps<{
   editor: Editor | null | undefined
