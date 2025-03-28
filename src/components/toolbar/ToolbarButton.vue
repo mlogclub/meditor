@@ -12,8 +12,6 @@
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import tippy from 'tippy.js'
 import type { Instance as TippyInstance } from 'tippy.js'
-import 'tippy.js/dist/tippy.css'
-import 'tippy.js/themes/light.css'
 
 const props = defineProps<{
   isActive?: boolean
