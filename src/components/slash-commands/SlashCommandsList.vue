@@ -1,5 +1,5 @@
 <template>
-  <div class="slash-commands">
+  <div class="slash-commands" ref="slashCommandsRef">
     <button
       v-for="item in items"
       :key="item.title"
@@ -123,7 +123,7 @@ export const getSuggestionItems = () => [
 </script>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 
 const props = defineProps<{
   items: CommandItem[]
@@ -135,6 +135,7 @@ const props = defineProps<{
 
 const selectedItem = ref<CommandItem | null>(null)
 const selectedIndex = ref(0)
+const slashCommandsRef = ref<HTMLElement | null>(null)
 
 // 初始化选中第一项
 if (props.items.length > 0) {
@@ -152,6 +153,37 @@ watch(() => props.items, (newItems) => {
     selectedIndex.value = 0;
   }
 }, { immediate: true });
+
+// 滚动到选中项
+const scrollToSelected = () => {
+  nextTick(() => {
+    const container = slashCommandsRef.value;
+    const selectedElement = container?.querySelector('.is-selected') as HTMLElement;
+    
+    if (container && selectedElement) {
+      // 获取容器和选中元素的位置信息
+      const containerRect = container.getBoundingClientRect();
+      const selectedRect = selectedElement.getBoundingClientRect();
+      
+      // 判断选中元素是否在容器可视区域外
+      const isAbove = selectedRect.top < containerRect.top;
+      const isBelow = selectedRect.bottom > containerRect.bottom;
+      
+      if (isAbove) {
+        // 如果选中项在可视区域上方，滚动到使其显示在顶部
+        container.scrollTop = selectedElement.offsetTop;
+      } else if (isBelow) {
+        // 如果选中项在可视区域下方，滚动到使其显示在底部
+        container.scrollTop = selectedElement.offsetTop + selectedElement.offsetHeight - container.clientHeight;
+      }
+    }
+  });
+};
+
+// 监听选中项变化，滚动到选中项
+watch(() => selectedItem.value, () => {
+  scrollToSelected();
+});
 
 const selectItem = (item: CommandItem) => {
   selectedItem.value = item
