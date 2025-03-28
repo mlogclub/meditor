@@ -22,9 +22,9 @@ import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import { Editor } from '@tiptap/core'
 import { BubbleMenu } from '@tiptap/extension-bubble-menu'
 import { FloatingMenu } from '@tiptap/extension-floating-menu'
-import { suggestion } from './suggestion'
+import { suggestion, SlashCommandsList, getSuggestionItems } from './slash-commands'
+import type { CommandItem } from './slash-commands'
 import EditorToolbar from './EditorToolbar.vue'
-import SlashCommandsList, { getSuggestionItems, type CommandItem } from './SlashCommandsList.vue'
 
 const props = defineProps<{
   modelValue: string
