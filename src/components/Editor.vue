@@ -164,12 +164,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { Editor } from '@tiptap/core'
-import { StarterKit } from '../index'
+import { Editor } from "@tiptap/core";
+import { StarterKit } from "../index";
 
-const editorRef = ref<HTMLElement | null>(null)
-const editor = ref<Editor | null>(null)
+const editorRef = ref<HTMLElement | null>(null);
+const editor = ref<Editor | null>(null);
 
 onMounted(() => {
   if (editorRef.value) {
@@ -177,53 +176,53 @@ onMounted(() => {
       element: editorRef.value,
       extensions: [StarterKit],
       content: {
-        type: 'doc',
+        type: "doc",
         content: [
           {
-            type: 'heading',
+            type: "heading",
             attrs: { level: 1 },
-            content: [{ type: 'text', text: '欢迎使用 Tiptap 编辑器' }],
+            content: [{ type: "text", text: "欢迎使用 Tiptap 编辑器" }],
           },
           {
-            type: 'paragraph',
+            type: "paragraph",
             content: [
-              { type: 'text', text: '这是一个基于 Tiptap 的富文本编辑器，支持以下功能：' },
+              { type: "text", text: "这是一个基于 Tiptap 的富文本编辑器，支持以下功能：" },
             ],
           },
           {
-            type: 'bulletList',
+            type: "bulletList",
             content: [
               {
-                type: 'listItem',
-                content: [{ type: 'text', text: '文本样式（加粗、斜体、下划线等）' }],
+                type: "listItem",
+                content: [{ type: "text", text: "文本样式（加粗、斜体、下划线等）" }],
               },
               {
-                type: 'listItem',
-                content: [{ type: 'text', text: '标题（H1-H3）' }],
+                type: "listItem",
+                content: [{ type: "text", text: "标题（H1-H3）" }],
               },
               {
-                type: 'listItem',
-                content: [{ type: 'text', text: '列表（有序、无序、任务）' }],
+                type: "listItem",
+                content: [{ type: "text", text: "列表（有序、无序、任务）" }],
               },
               {
-                type: 'listItem',
-                content: [{ type: 'text', text: '对齐方式' }],
+                type: "listItem",
+                content: [{ type: "text", text: "对齐方式" }],
               },
               {
-                type: 'listItem',
-                content: [{ type: 'text', text: '引用、代码块、分割线' }],
+                type: "listItem",
+                content: [{ type: "text", text: "引用、代码块、分割线" }],
               },
             ],
           },
         ],
       },
-    })
+    });
   }
-})
+});
 
 onBeforeUnmount(() => {
-  editor.value?.destroy()
-})
+  editor.value?.destroy();
+});
 </script>
 
 <style scoped>

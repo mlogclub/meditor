@@ -83,6 +83,7 @@
     "@tiptap/extension-underline": "^2.11.6",
     "@tiptap/starter-kit": "^2.11.6",
     "@tiptap/suggestion": "^2.11.5",
+    "@vueuse/core": "^13.0.0",
     "gemoji": "^8.1.0",
     "katex": "^0.16.21",
     "lowlight": "^3.3.0",
@@ -113,6 +114,7 @@
     "@types/node": "^22.13.14",
     "@types/plantuml-encoder": "^1.4.2",
     "@types/unist": "^3.0.3",
+    "@types/vue": "^2.0.0",
     "@vitejs/plugin-vue": "^5.2.3",
     "bunchee": "^6.5.0",
     "eslint": "^9.22.0",
@@ -120,6 +122,8 @@
     "less": "^4.2.2",
     "less-plugin-autoprefix": "^2.0.0",
     "typescript": "^5.8.2",
+    "unplugin-auto-import": "^19.1.2",
+    "unplugin-vue-components": "^28.4.1",
     "vite": "^6.2.2",
     "vue-tsc": "^1.8.27"
   }
