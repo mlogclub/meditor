@@ -1,37 +1,76 @@
 {
-  "name": "huabei-editor",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@syfxlin/tiptap-starter-kit",
   "type": "module",
+  "version": "0.0.0-semantic-release",
+  "description": "The non-official starter kit of the Tiptap editor contains common extensions.",
+  "author": "syfxlin <i@ixk.me>",
+  "license": "MIT",
+  "homepage": "https://github.com/syfxlin/tiptap-starter-kit",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/syfxlin/tiptap-starter-kit"
+  },
+  "bugs": {
+    "url": "https://github.com/syfxlin/tiptap-starter-kit/issues"
+  },
+  "keywords": [
+    "tiptap",
+    "tiptap-extension"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "style": "lessc ./src/styles.less ./src/styles.css --autoprefix=\"defaults\"",
+    "build": "pnpm style && bunchee",
+    "watch": "pnpm style && bunchee --watch"
+  },
+  "peerDependencies": {
+    "@tiptap/core": "^2.2.4",
+    "@tiptap/pm": "^2.2.4"
   },
   "dependencies": {
-    "@tiptap/core": "^2.11.5",
     "@tiptap/extension-blockquote": "^2.11.5",
-    "@tiptap/extension-bubble-menu": "^2.11.5",
+    "@tiptap/extension-bold": "^2.11.5",
     "@tiptap/extension-bullet-list": "^2.11.5",
     "@tiptap/extension-code": "^2.11.5",
-    "@tiptap/extension-code-block": "^2.11.5",
-    "@tiptap/extension-color": "^2.11.5",
+    "@tiptap/extension-code-block-lowlight": "^2.11.5",
     "@tiptap/extension-document": "^2.11.5",
     "@tiptap/extension-dropcursor": "^2.11.5",
-    "@tiptap/extension-floating-menu": "^2.11.5",
     "@tiptap/extension-gapcursor": "^2.11.5",
     "@tiptap/extension-hard-break": "^2.11.5",
     "@tiptap/extension-heading": "^2.11.5",
+    "@tiptap/extension-highlight": "^2.11.5",
     "@tiptap/extension-history": "^2.11.5",
     "@tiptap/extension-horizontal-rule": "^2.11.5",
     "@tiptap/extension-image": "^2.11.5",
+    "@tiptap/extension-italic": "^2.11.5",
     "@tiptap/extension-link": "^2.11.5",
     "@tiptap/extension-list-item": "^2.11.5",
-    "@tiptap/extension-mention": "^2.11.5",
     "@tiptap/extension-ordered-list": "^2.11.5",
     "@tiptap/extension-paragraph": "^2.11.5",
-    "@tiptap/extension-placeholder": "^2.11.5",
     "@tiptap/extension-strike": "^2.11.5",
+    "@tiptap/extension-subscript": "^2.11.5",
+    "@tiptap/extension-superscript": "^2.11.5",
     "@tiptap/extension-table": "^2.11.5",
     "@tiptap/extension-table-cell": "^2.11.5",
     "@tiptap/extension-table-header": "^2.11.5",
@@ -39,25 +78,42 @@
     "@tiptap/extension-task-item": "^2.11.5",
     "@tiptap/extension-task-list": "^2.11.5",
     "@tiptap/extension-text": "^2.11.5",
-    "@tiptap/extension-text-align": "^2.11.5",
-    "@tiptap/extension-text-style": "^2.11.5",
-    "@tiptap/extension-typography": "^2.11.5",
     "@tiptap/extension-underline": "^2.11.5",
-    "@tiptap/pm": "^2.11.5",
-    "@tiptap/starter-kit": "^2.11.5",
     "@tiptap/suggestion": "^2.11.5",
-    "@tiptap/vue-3": "^2.11.5",
-    "lucide-vue-next": "^0.484.0",
+    "gemoji": "^8.1.0",
+    "katex": "^0.16.21",
+    "lowlight": "^3.3.0",
+    "mdast-util-from-markdown": "^2.0.2",
+    "mdast-util-to-markdown": "^2.1.2",
+    "mermaid": "^11.5.0",
+    "plantuml-encoder": "^1.4.0",
+    "plyr": "^3.7.8",
+    "remark-directive": "^4.0.0",
+    "remark-gemoji": "^8.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "smooth-scroll-into-view-if-needed": "^2.0.2",
     "tippy.js": "^6.3.7",
-    "vue": "^3.5.13"
+    "unified": "^11.0.5",
+    "unist-builder": "^4.0.0",
+    "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
-    "@tsconfig/node20": "^20.1.5",
-    "@types/node": "^22.13.14",
-    "@vitejs/plugin-vue": "^5.2.1",
-    "@vue/tsconfig": "^0.7.0",
-    "typescript": "~5.7.2",
-    "vite": "^6.2.0",
-    "vue-tsc": "^2.2.4"
+    "@syfxlin/eslint-config": "^1.1.0",
+    "@tiptap/core": "^2.11.5",
+    "@tiptap/pm": "^2.11.5",
+    "@types/katex": "^0.16.7",
+    "@types/mdast": "^4.0.4",
+    "@types/plantuml-encoder": "^1.4.2",
+    "@types/unist": "^3.0.3",
+    "bunchee": "^6.5.0",
+    "eslint": "^9.22.0",
+    "eslint-plugin-format": "^1.0.1",
+    "less": "^4.2.2",
+    "less-plugin-autoprefix": "^2.0.0",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.2"
   }
 }
