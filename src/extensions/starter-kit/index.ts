@@ -47,6 +47,7 @@ import { Clipboard, ClipboardOptions } from "../clipboard";
 import { FloatMenu, FloatMenuOptions } from "../float-menu/menu";
 import { Markdown, MarkdownOptions } from "../markdown";
 import { Uploader, UploaderOptions } from "../uploader";
+import { TextAlign } from "../text-align";
 
 export interface StarterKitOptions {
   // marks
@@ -100,6 +101,8 @@ export interface StarterKitOptions {
   history?: Partial<HistoryOptions> | boolean;
   gapCursor?: Partial<any> | boolean;
   dropCursor?: Partial<DropcursorOptions> | boolean;
+  // text align
+  textAlign?: boolean;
 }
 
 export const StarterKit = Extension.create<StarterKitOptions>({
@@ -158,6 +161,8 @@ export const StarterKit = Extension.create<StarterKitOptions>({
     configure(extensions, History, this.options.history);
     configure(extensions, Gapcursor, this.options.gapCursor);
     configure(extensions, Dropcursor, this.options.dropCursor, { color: "var(--tiptap-primary-background)", width: 2 });
+    // text align
+    configure(extensions, TextAlign, this.options.textAlign);
 
     return extensions;
   },

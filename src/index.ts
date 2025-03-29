@@ -51,6 +51,7 @@ export * from "./extensions/clipboard";
 export * from "./extensions/block-menu/menu";
 export * from "./extensions/float-menu/menu";
 export * from "./extensions/click-menu/menu";
+export * from "./extensions/text-align";
 export * from "@tiptap/extension-history";
 export * from "@tiptap/extension-gapcursor";
 export * from "@tiptap/extension-dropcursor";

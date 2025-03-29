@@ -1,22 +1,9 @@
 {
   "name": "@syfxlin/tiptap-starter-kit",
   "type": "module",
-  "version": "0.0.0-semantic-release",
-  "description": "The non-official starter kit of the Tiptap editor contains common extensions.",
-  "author": "syfxlin <i@ixk.me>",
-  "license": "MIT",
-  "homepage": "https://github.com/syfxlin/tiptap-starter-kit",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/syfxlin/tiptap-starter-kit"
-  },
-  "bugs": {
-    "url": "https://github.com/syfxlin/tiptap-starter-kit/issues"
-  },
-  "keywords": [
-    "tiptap",
-    "tiptap-extension"
-  ],
+  "version": "1.0.0",
+  "private": true,
+  "author": "https://bbs-go.com",
   "publishConfig": {
     "access": "public"
   },
@@ -43,11 +30,8 @@
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "style": "lessc ./src/styles.less ./src/styles.css --autoprefix=\"defaults\"",
-    "watch": "pnpm style && bunchee --watch"
-  },
-  "peerDependencies": {
-    "@tiptap/core": "^2.2.4",
-    "@tiptap/pm": "^2.2.4"
+    "watch": "pnpm style && bunchee --watch",
+    "lint-staged": "npx lint-staged"
   },
   "dependencies": {
     "@tiptap/extension-blockquote": "^2.11.5",
@@ -83,6 +67,7 @@
     "@tiptap/extension-underline": "^2.11.6",
     "@tiptap/starter-kit": "^2.11.6",
     "@tiptap/suggestion": "^2.11.5",
+    "@tiptap/vue-3": "^2.11.6",
     "@vueuse/core": "^13.0.0",
     "gemoji": "^8.1.0",
     "katex": "^0.16.21",
@@ -106,7 +91,7 @@
     "vue": "^3.5.13"
   },
   "devDependencies": {
-    "@syfxlin/eslint-config": "^1.1.0",
+    "@antfu/eslint-config": "^4.11.0",
     "@tiptap/core": "^2.11.5",
     "@tiptap/pm": "^2.11.5",
     "@types/katex": "^0.16.7",
@@ -114,11 +99,14 @@
     "@types/node": "^22.13.14",
     "@types/plantuml-encoder": "^1.4.2",
     "@types/unist": "^3.0.3",
-    "@types/vue": "^2.0.0",
     "@vitejs/plugin-vue": "^5.2.3",
     "bunchee": "^6.5.0",
     "eslint": "^9.22.0",
-    "eslint-plugin-format": "^1.0.1",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-import-resolver-typescript": "^4.2.7",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.2.5",
+    "eslint-plugin-vue": "^10.0.0",
     "less": "^4.2.2",
     "less-plugin-autoprefix": "^2.0.0",
     "typescript": "^5.8.2",
@@ -126,5 +114,20 @@
     "unplugin-vue-components": "^28.4.1",
     "vite": "^6.2.2",
     "vue-tsc": "^1.8.27"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.vue": [
+      "stylelint --fix",
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{less,css}": [
+      "stylelint --fix",
+      "prettier --write"
+    ]
   }
 }

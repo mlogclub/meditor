@@ -8,6 +8,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AlignmentTools: typeof import('./components/editor/toolbar/AlignmentTools.vue')['default']
     Editor: typeof import('./components/Editor.vue')['default']
+    EditorToolbar: typeof import('./components/editor/toolbar/EditorToolbar.vue')['default']
+    HeadingTools: typeof import('./components/editor/toolbar/HeadingTools.vue')['default']
+    ListTools: typeof import('./components/editor/toolbar/ListTools.vue')['default']
+    MiscTools: typeof import('./components/editor/toolbar/MiscTools.vue')['default']
+    TextStyleTools: typeof import('./components/editor/toolbar/TextStyleTools.vue')['default']
+    ToolbarButton: typeof import('./components/editor/toolbar/ToolbarButton.vue')['default']
   }
 }
