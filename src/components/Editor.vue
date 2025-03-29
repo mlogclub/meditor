@@ -36,6 +36,14 @@
         >
           <span class="ProseMirror-icon ProseMirror-icon-strike"></span>
         </button>
+        <button 
+          class="toolbar-button"
+          :class="{ active: editor?.isActive('highlight') }"
+          @click="editor?.chain().focus().toggleHighlight().run()"
+          title="高亮"
+        >
+          <span class="ProseMirror-icon ProseMirror-icon-highlight"></span>
+        </button>
       </div>
 
       <div class="toolbar-group">
@@ -158,11 +166,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { Editor } from '@tiptap/core'
-import StarterKit from '@tiptap/starter-kit'
-import Underline from '@tiptap/extension-underline'
-import TextAlign from '@tiptap/extension-text-align'
-import TaskList from '@tiptap/extension-task-list'
-import TaskItem from '@tiptap/extension-task-item'
+import { StarterKit } from '../index'
 
 const editorRef = ref<HTMLElement | null>(null)
 const editor = ref<Editor | null>(null)
@@ -171,16 +175,48 @@ onMounted(() => {
   if (editorRef.value) {
     editor.value = new Editor({
       element: editorRef.value,
-      extensions: [
-        StarterKit,
-        Underline,
-        TextAlign.configure({
-          types: ['heading', 'paragraph'],
-        }),
-        TaskList,
-        TaskItem,
-      ],
-      content: '<p>开始编辑...</p>',
+      extensions: [StarterKit],
+      content: {
+        type: 'doc',
+        content: [
+          {
+            type: 'heading',
+            attrs: { level: 1 },
+            content: [{ type: 'text', text: '欢迎使用 Tiptap 编辑器' }],
+          },
+          {
+            type: 'paragraph',
+            content: [
+              { type: 'text', text: '这是一个基于 Tiptap 的富文本编辑器，支持以下功能：' },
+            ],
+          },
+          {
+            type: 'bulletList',
+            content: [
+              {
+                type: 'listItem',
+                content: [{ type: 'text', text: '文本样式（加粗、斜体、下划线等）' }],
+              },
+              {
+                type: 'listItem',
+                content: [{ type: 'text', text: '标题（H1-H3）' }],
+              },
+              {
+                type: 'listItem',
+                content: [{ type: 'text', text: '列表（有序、无序、任务）' }],
+              },
+              {
+                type: 'listItem',
+                content: [{ type: 'text', text: '对齐方式' }],
+              },
+              {
+                type: 'listItem',
+                content: [{ type: 'text', text: '引用、代码块、分割线' }],
+              },
+            ],
+          },
+        ],
+      },
     })
   }
 })
