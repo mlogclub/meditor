@@ -14,7 +14,25 @@ declare module '@tiptap/core' {
       /**
        * 添加图片
        */
-      setResizableImage: (options: { src: string, alt?: string, title?: string, width?: string, height?: string }) => ReturnType,
+      setResizableImage: (options: { 
+        src: string, 
+        alt?: string, 
+        title?: string, 
+        width?: string, 
+        height?: string,
+        align?: 'left' | 'center' | 'right'
+      }) => ReturnType,
+      /**
+       * 更新图片属性
+       */
+      updateResizableImage: (options: {
+        src?: string,
+        alt?: string,
+        title?: string,
+        width?: string,
+        height?: string,
+        align?: 'left' | 'center' | 'right'
+      }) => ReturnType,
     }
   }
 }
@@ -76,6 +94,15 @@ export const ResizableImage = Node.create<ImageOptions>({
           }
         },
       },
+      align: {
+        default: 'center',
+        parseHTML: element => element.getAttribute('align') || 'center',
+        renderHTML: attributes => {
+          return {
+            style: `text-align: ${attributes.align}`,
+          }
+        },
+      },
     }
   },
 
@@ -104,6 +131,22 @@ export const ResizableImage = Node.create<ImageOptions>({
             attrs: options,
           })
           .run()
+      },
+      updateResizableImage: options => ({ chain, state, dispatch }) => {
+        const { selection } = state
+        const { empty } = selection
+
+        if (empty) {
+          return false
+        }
+
+        if (dispatch) {
+          chain()
+            .updateAttributes(this.name, options)
+            .run()
+        }
+
+        return true
       },
     }
   },
@@ -135,7 +178,12 @@ export const ResizableImage = Node.create<ImageOptions>({
                   const src = readerEvent.target?.result
                   if (typeof src === 'string') {
                     view.dispatch(view.state.tr.replaceSelectionWith(
-                      view.state.schema.nodes.resizableImage.create({ src })
+                      view.state.schema.nodes.resizableImage.create({ 
+                        src,
+                        width: '100%',
+                        height: 'auto',
+                        align: 'center'
+                      })
                     ))
                   }
                 }
@@ -152,7 +200,9 @@ export const ResizableImage = Node.create<ImageOptions>({
                 return false
               }
 
-              const images = Array.from(event.dataTransfer.files).filter(file => /image\/(jpg|jpeg|png|gif|webp)/.test(file.type))
+              const images = Array.from(event.dataTransfer.files).filter(file => 
+                /image\/(jpg|jpeg|png|gif|webp|svg)/.test(file.type)
+              )
               
               if (images.length === 0) {
                 return false
@@ -168,7 +218,12 @@ export const ResizableImage = Node.create<ImageOptions>({
                 reader.onload = readerEvent => {
                   const src = readerEvent.target?.result
                   if (typeof src === 'string' && coordinates) {
-                    const node = schema.nodes.resizableImage.create({ src })
+                    const node = schema.nodes.resizableImage.create({ 
+                      src,
+                      width: '100%',
+                      height: 'auto',
+                      align: 'center'
+                    })
                     const transaction = view.state.tr.insert(coordinates.pos, node)
                     view.dispatch(transaction)
                   }

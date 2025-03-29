@@ -65,8 +65,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   transition: all 0.2s ease;
   color: #4b5563;
 }

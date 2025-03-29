@@ -24,13 +24,3 @@ export const setLink = (editor: Editor | null | undefined) => {
 
   editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
 }
-
-// 通用的图片添加函数
-export const addImage = (editor: Editor | null | undefined) => {
-  if (!editor) return
-  const url = window.prompt('URL')
-  if (url === null) {
-    return
-  }
-  editor.chain().focus().setResizableImage({ src: url }).run()
-} 
