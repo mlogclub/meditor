@@ -26,6 +26,7 @@ import EditorToolbar from "./EditorToolbar.vue";
 import { ResizableImage } from "./image-extension";
 
 import "tippy.js/dist/tippy.css";
+import "../styles/scrollbar.css";
 
 const props = defineProps<{
   modelValue: string;
@@ -123,6 +124,13 @@ onBeforeUnmount(() => {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+/* 暗色主题滚动条 */
+.dark .editor-content {
+  scrollbar-color: #4a4a4a #2d2d2d;
 }
 
 .editor-content .ProseMirror {

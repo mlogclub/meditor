@@ -234,6 +234,13 @@ defineExpose({
   width: 240px;
   max-height: 400px;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+/* 暗色主题滚动条 */
+.dark .slash-commands {
+  scrollbar-color: #4a4a4a #2d2d2d;
 }
 
 .slash-item {
@@ -247,37 +254,59 @@ defineExpose({
   border-radius: 4px;
   cursor: pointer;
   text-align: left;
+  transition: background-color 0.2s ease;
 }
 
-.slash-item:hover,
+.slash-item:hover {
+  background-color: #f3f4f6;
+}
+
 .slash-item.is-selected {
-  background: #f3f4f6;
+  background-color: #e5e7eb;
 }
 
 .item-icon {
   margin-right: 0.75rem;
   color: #6b7280;
-  flex-shrink: 0;
 }
 
 .item-content {
-  overflow: hidden;
+  flex: 1;
 }
 
 .item-title {
-  font-size: 0.875rem;
   font-weight: 500;
   color: #111827;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .item-description {
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   color: #6b7280;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+/* 暗色主题样式 */
+.dark .slash-commands {
+  background: #1f2937;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0px 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.dark .slash-item:hover {
+  background-color: #374151;
+}
+
+.dark .slash-item.is-selected {
+  background-color: #4b5563;
+}
+
+.dark .item-icon {
+  color: #9ca3af;
+}
+
+.dark .item-title {
+  color: #f9fafb;
+}
+
+.dark .item-description {
+  color: #9ca3af;
 }
 </style> 
