@@ -134,8 +134,18 @@ const startResize = (
   currentHandle = handle;
   startX = event.clientX;
   startY = event.clientY;
-  startWidth = parseInt(props.node.attrs.width || "100");
-  startHeight = parseInt(props.node.attrs.height || "100");
+
+  // 获取图片的实际尺寸
+  const img = event.target as HTMLElement;
+  const imgElement = img.querySelector('img') as HTMLImageElement;
+  if (imgElement) {
+    startWidth = imgElement.offsetWidth;
+    startHeight = imgElement.offsetHeight;
+  } else {
+    // 如果无法获取实际尺寸，使用默认值
+    startWidth = parseInt(props.node.attrs.width || "100");
+    startHeight = parseInt(props.node.attrs.height || "100");
+  }
 
   document.addEventListener("mousemove", handleResize);
   document.addEventListener("mouseup", stopResize);
@@ -167,6 +177,14 @@ const handleResize = (event: MouseEvent) => {
       newWidth = Math.max(50, startWidth - deltaX);
       newHeight = Math.max(50, startHeight - deltaY);
       break;
+  }
+
+  // 保持图片的宽高比
+  const aspectRatio = startWidth / startHeight;
+  if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    newHeight = Math.round(newWidth / aspectRatio);
+  } else {
+    newWidth = Math.round(newHeight * aspectRatio);
   }
 
   props.updateAttributes({
