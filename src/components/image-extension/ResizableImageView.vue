@@ -15,17 +15,22 @@
         height: node.attrs.height || 'auto',
       }"
     >
-      <img
-        :src="node.attrs.src"
-        :alt="node.attrs.alt"
-        :title="node.attrs.title"
-        :style="{
-          width: node.attrs.width || '100%',
-          height: node.attrs.height || 'auto',
-        }"
-        @click="selectImage"
-        @dblclick="handleDoubleClick"
-      />
+      <template v-if="!node.attrs.src">
+        <ImageUpload @upload="handleUpload" />
+      </template>
+      <template v-else>
+        <ImagePreview
+          :src="node.attrs.src"
+          :alt="node.attrs.alt"
+          :width="node.attrs.width"
+          :height="node.attrs.height"
+          :object-fit="node.attrs.objectFit"
+          @click="selectImage"
+          @edit="handleEdit"
+          @delete="handleDelete"
+        />
+      </template>
+
       <!-- 拖动边框和控制点 -->
       <div v-if="isHovered || isSelected" class="resize-frame">
         <div
@@ -40,33 +45,50 @@
       <!-- 工具栏 -->
       <div v-if="isSelected" class="image-controls">
         <div class="image-toolbar">
-          <button
-            class="toolbar-button"
-            @click="handleAlign('left')"
-            :class="{ active: node.attrs.align === 'left' }"
-            title="左对齐"
-          >
-            <AlignLeft :size="16" />
-          </button>
-          <button
-            class="toolbar-button"
-            @click="handleAlign('center')"
-            :class="{ active: node.attrs.align === 'center' }"
-            title="居中"
-          >
-            <AlignCenter :size="16" />
-          </button>
-          <button
-            class="toolbar-button"
-            @click="handleAlign('right')"
-            :class="{ active: node.attrs.align === 'right' }"
-            title="右对齐"
-          >
-            <AlignRight :size="16" />
-          </button>
-          <button class="toolbar-button" @click="handleEdit" title="编辑图片">
-            <Edit :size="16" />
-          </button>
+          <div class="toolbar-group">
+            <button
+              class="toolbar-button"
+              @click="handleAlign('left')"
+              :class="{ active: node.attrs.align === 'left' }"
+              title="左对齐"
+            >
+              <AlignLeft :size="16" />
+            </button>
+            <button
+              class="toolbar-button"
+              @click="handleAlign('center')"
+              :class="{ active: node.attrs.align === 'center' }"
+              title="居中"
+            >
+              <AlignCenter :size="16" />
+            </button>
+            <button
+              class="toolbar-button"
+              @click="handleAlign('right')"
+              :class="{ active: node.attrs.align === 'right' }"
+              title="右对齐"
+            >
+              <AlignRight :size="16" />
+            </button>
+          </div>
+          <div class="toolbar-group">
+            <button
+              class="toolbar-button"
+              @click="handleObjectFit('contain')"
+              :class="{ active: node.attrs.objectFit === 'contain' }"
+              title="适应"
+            >
+              <Maximize :size="16" />
+            </button>
+            <button
+              class="toolbar-button"
+              @click="handleObjectFit('cover')"
+              :class="{ active: node.attrs.objectFit === 'cover' }"
+              title="填充"
+            >
+              <Minimize :size="16" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -76,7 +98,15 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { NodeViewWrapper, nodeViewProps } from "@tiptap/vue-3";
-import { AlignLeft, AlignCenter, AlignRight, Edit } from "lucide-vue-next";
+import { 
+  AlignLeft, 
+  AlignCenter, 
+  AlignRight, 
+  Maximize, 
+  Minimize,
+} from "lucide-vue-next";
+import ImageUpload from './ImageUpload.vue'
+import ImagePreview from './ImagePreview.vue'
 
 const props = defineProps(nodeViewProps);
 
@@ -110,8 +140,21 @@ const selectImage = () => {
   isSelected.value = true;
 };
 
-const handleDoubleClick = () => {
-  handleEdit();
+const handleUpload = (file: File) => {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const src = e.target?.result as string;
+    if (src) {
+      props.updateAttributes({
+        src,
+        width: '100%',
+        height: 'auto',
+        align: 'center',
+        objectFit: 'contain'
+      });
+    }
+  };
+  reader.readAsDataURL(file);
 };
 
 const handleEdit = () => {
@@ -121,8 +164,18 @@ const handleEdit = () => {
   }
 };
 
+const handleDelete = () => {
+  if (confirm("确定要删除这张图片吗？")) {
+    props.deleteNode();
+  }
+};
+
 const handleAlign = (align: "left" | "center" | "right") => {
   props.updateAttributes({ align });
+};
+
+const handleObjectFit = (objectFit: "contain" | "cover") => {
+  props.updateAttributes({ objectFit });
 };
 
 const startResize = (
@@ -257,7 +310,7 @@ onBeforeUnmount(() => {
   max-width: 100%;
   height: auto;
   border-radius: 4px;
-  /* transition: all 0.2s; */
+  transition: all 0.2s;
 }
 
 /* 拖动边框 */
@@ -319,6 +372,17 @@ onBeforeUnmount(() => {
   z-index: 999999;
 }
 
+.toolbar-group {
+  display: flex;
+  gap: 4px;
+  padding: 0 4px;
+  border-right: 1px solid #e5e7eb;
+}
+
+.toolbar-group:last-child {
+  border-right: none;
+}
+
 .toolbar-button {
   padding: 4px;
   border: none;
@@ -337,5 +401,29 @@ onBeforeUnmount(() => {
 .toolbar-button.active {
   background: #e5e7eb;
   color: #1f2937;
+}
+
+/* 暗色主题 */
+.dark .image-controls {
+  background: #1f2937;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dark .toolbar-group {
+  border-right-color: #374151;
+}
+
+.dark .toolbar-button {
+  color: #9ca3af;
+}
+
+.dark .toolbar-button:hover {
+  background: #374151;
+  color: #f9fafb;
+}
+
+.dark .toolbar-button.active {
+  background: #4b5563;
+  color: #f9fafb;
 }
 </style>

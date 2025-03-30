@@ -20,7 +20,8 @@ declare module '@tiptap/core' {
         title?: string, 
         width?: string, 
         height?: string,
-        align?: 'left' | 'center' | 'right'
+        align?: 'left' | 'center' | 'right',
+        objectFit?: 'contain' | 'cover'
       }) => ReturnType,
       /**
        * 更新图片属性
@@ -31,7 +32,8 @@ declare module '@tiptap/core' {
         title?: string,
         width?: string,
         height?: string,
-        align?: 'left' | 'center' | 'right'
+        align?: 'left' | 'center' | 'right',
+        objectFit?: 'contain' | 'cover'
       }) => ReturnType,
     }
   }
@@ -103,6 +105,15 @@ export const ResizableImage = Node.create<ImageOptions>({
           }
         },
       },
+      objectFit: {
+        default: 'contain',
+        parseHTML: element => element.style.objectFit || 'contain',
+        renderHTML: attributes => {
+          return {
+            style: `object-fit: ${attributes.objectFit}`,
+          }
+        },
+      },
     }
   },
 
@@ -128,7 +139,10 @@ export const ResizableImage = Node.create<ImageOptions>({
         return chain()
           .insertContent({
             type: this.name,
-            attrs: options,
+            attrs: {
+              ...options,
+              objectFit: options.objectFit || 'contain',
+            },
           })
           .run()
       },
@@ -182,7 +196,8 @@ export const ResizableImage = Node.create<ImageOptions>({
                         src,
                         width: '100%',
                         height: 'auto',
-                        align: 'center'
+                        align: 'center',
+                        objectFit: 'contain'
                       })
                     ))
                   }
@@ -222,7 +237,8 @@ export const ResizableImage = Node.create<ImageOptions>({
                       src,
                       width: '100%',
                       height: 'auto',
-                      align: 'center'
+                      align: 'center',
+                      objectFit: 'contain'
                     })
                     const transaction = view.state.tr.insert(coordinates.pos, node)
                     view.dispatch(transaction)
