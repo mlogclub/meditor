@@ -6,68 +6,67 @@
 </template>
 
 <script setup lang="ts">
-import { useEditor, EditorContent } from '@tiptap/vue-3'
-import StarterKit from '@tiptap/starter-kit'
-import TextAlign from '@tiptap/extension-text-align'
-import TextStyle from '@tiptap/extension-text-style'
-import Color from '@tiptap/extension-color'
-import Link from '@tiptap/extension-link'
-import 'tippy.js/dist/tippy.css'
-import Table from '@tiptap/extension-table'
-import TableRow from '@tiptap/extension-table-row'
-import TableCell from '@tiptap/extension-table-cell'
-import TableHeader from '@tiptap/extension-table-header'
-import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
-import { Editor } from '@tiptap/core'
-import { BubbleMenu } from '@tiptap/extension-bubble-menu'
-import { FloatingMenu } from '@tiptap/extension-floating-menu'
-import { suggestion, SlashCommandsList, getSuggestionItems } from './slash-commands'
-import type { CommandItem } from './slash-commands'
-import EditorToolbar from './EditorToolbar.vue'
-import { ResizableImage } from './image-extension'
+import { ref, onMounted, onBeforeUnmount, watch } from "vue";
+import { useEditor, EditorContent } from "@tiptap/vue-3";
+
+import StarterKit from "@tiptap/starter-kit";
+import TextAlign from "@tiptap/extension-text-align";
+import TextStyle from "@tiptap/extension-text-style";
+import Color from "@tiptap/extension-color";
+import Link from "@tiptap/extension-link";
+import Table from "@tiptap/extension-table";
+import TableRow from "@tiptap/extension-table-row";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
+import { Editor } from "@tiptap/core";
+import { BubbleMenu } from "@tiptap/extension-bubble-menu";
+import { FloatingMenu } from "@tiptap/extension-floating-menu";
+import { suggestion } from "./slash-commands";
+import EditorToolbar from "./EditorToolbar.vue";
+import { ResizableImage } from "./image-extension";
+
+import "tippy.js/dist/tippy.css";
 
 const props = defineProps<{
-  modelValue: string
-}>()
+  modelValue: string;
+}>();
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void
-}>()
+  (e: "update:modelValue", value: string): void;
+}>();
 
-const editorRef = ref<Editor | null>(null)
-const showSlashCommands = ref(false)
-const slashCommandItems = ref(getSuggestionItems())
-const slashCommandRange = ref<{ from: number; to: number } | null>(null)
-const slashCommandClientRect = ref<DOMRect | null>(null)
+const editorRef = ref<Editor | null>(null);
+const showSlashCommands = ref(false);
+const slashCommandRange = ref<{ from: number; to: number } | null>(null);
 
 const editor = useEditor({
   content: props.modelValue,
   extensions: [
     StarterKit,
     TextAlign.configure({
-      types: ['heading', 'paragraph'],
+      types: ["heading", "paragraph"],
     }),
     TextStyle,
     Color.configure({
-      types: ['textStyle'],
+      types: ["textStyle"],
     }),
     ResizableImage.configure({
       inline: true,
       HTMLAttributes: {
-        class: 'resizable-image',
+        class: "resizable-image",
       },
     }),
     Link.configure({
       openOnClick: false,
       HTMLAttributes: {
-        rel: 'noopener noreferrer',
-        class: 'text-blue-500',
+        rel: "noopener noreferrer",
+        class: "text-blue-500",
       },
     }),
     Table.configure({
       resizable: true,
       HTMLAttributes: {
-        class: 'border-collapse table-fixed w-full',
+        class: "border-collapse table-fixed w-full",
       },
     }),
     TableRow,
@@ -78,34 +77,30 @@ const editor = useEditor({
     FloatingMenu,
   ],
   onCreate: ({ editor }) => {
-    editorRef.value = editor
+    editorRef.value = editor;
   },
   onUpdate: ({ editor }) => {
-    emit('update:modelValue', editor.getHTML())
+    emit("update:modelValue", editor.getHTML());
   },
-})
+});
 
-watch(() => props.modelValue, (newValue) => {
-  const isSame = newValue === editor.value?.getHTML()
-  if (editor.value && !isSame) {
-    editor.value.commands.setContent(newValue, false)
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    const isSame = newValue === editor.value?.getHTML();
+    if (editor.value && !isSame) {
+      editor.value.commands.setContent(newValue, false);
+    }
   }
-})
+);
 
 onMounted(() => {
-  editorRef.value = editor.value
-})
+  editorRef.value = editor.value;
+});
 
 onBeforeUnmount(() => {
-  editor.value?.destroy()
-})
-
-const executeSlashCommand = (item: CommandItem) => {
-  if (slashCommandRange.value) {
-    item.command({ editor: editor.value, range: slashCommandRange.value })
-    showSlashCommands.value = false
-  }
-}
+  editor.value?.destroy();
+});
 </script>
 
 <style>
@@ -175,7 +170,7 @@ const executeSlashCommand = (item: CommandItem) => {
   padding: 0;
   background: none;
   font-size: 0.9rem;
-  font-family: 'Fira Code', monospace;
+  font-family: "Fira Code", monospace;
 }
 
 .editor-content img {
@@ -213,4 +208,4 @@ const executeSlashCommand = (item: CommandItem) => {
   font-size: 0.9em;
   color: #1f2937;
 }
-</style> 
+</style>
