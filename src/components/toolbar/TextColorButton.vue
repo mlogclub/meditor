@@ -52,7 +52,6 @@ import { LucidePalette, LucideCheck } from 'lucide-vue-next'
 import ToolbarButton from './ToolbarButton.vue'
 import { TOOLBAR_ICON_SIZE } from '../../constants/editor'
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import '../../styles/toolbar.css'
 
 const props = defineProps<{
   editor: Editor | null | undefined

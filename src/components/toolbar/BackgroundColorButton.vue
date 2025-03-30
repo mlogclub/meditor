@@ -52,7 +52,6 @@ import { LucidePaintbrush, LucideCheck } from 'lucide-vue-next'
 import ToolbarButton from './ToolbarButton.vue'
 import { TOOLBAR_ICON_SIZE } from '../../constants/editor'
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import '../../styles/toolbar.css'
 
 const props = defineProps<{
   editor: Editor | null | undefined
@@ -123,7 +122,7 @@ const toggleColorPicker = (event: MouseEvent) => {
 const applyColor = (color: string) => {
   if (!props.editor) return
   backgroundColor.value = color
-  props.editor.chain().focus().setMark('textStyle', { style: `background-color: ${color}` }).run()
+  props.editor.chain().focus().toggleHighlight({ color: color }).run()
   
   // 添加到最近使用的颜色
   if (!recentColors.value.includes(color)) {

@@ -18,6 +18,7 @@ import Table from "@tiptap/extension-table";
 import TableRow from "@tiptap/extension-table-row";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
+import Highlight from "@tiptap/extension-highlight";
 import { Editor } from "@tiptap/core";
 import { BubbleMenu } from "@tiptap/extension-bubble-menu";
 import { FloatingMenu } from "@tiptap/extension-floating-menu";
@@ -37,8 +38,6 @@ const emit = defineEmits<{
 }>();
 
 const editorRef = ref<Editor | null>(null);
-const showSlashCommands = ref(false);
-const slashCommandRange = ref<{ from: number; to: number } | null>(null);
 
 const editor = useEditor({
   content: props.modelValue,
@@ -76,6 +75,9 @@ const editor = useEditor({
     suggestion,
     BubbleMenu,
     FloatingMenu,
+    Highlight.configure({
+      multicolor: true,
+    }),
   ],
   onCreate: ({ editor }) => {
     editorRef.value = editor;
