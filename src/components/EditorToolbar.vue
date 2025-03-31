@@ -22,6 +22,8 @@
     <ToolbarDivider />
     <TextColorButton :editor="editor" />
     <BackgroundColorButton :editor="editor" />
+    <ToolbarDivider />
+    <ImageButton :editor="editor" />
   </div>
 </template>
 
@@ -45,6 +47,7 @@ import AlignCenterButton from './toolbar/AlignCenterButton.vue'
 import AlignRightButton from './toolbar/AlignRightButton.vue'
 import TextColorButton from './toolbar/TextColorButton.vue'
 import BackgroundColorButton from './toolbar/BackgroundColorButton.vue'
+import ImageButton from './toolbar/ImageButton.vue'
 import '../styles/toolbar.css'
 
 defineProps<{
@@ -52,7 +55,7 @@ defineProps<{
 }>()
 </script>
 
-<style>
+<style lang="scss">
 .editor-toolbar {
   padding: 0.25rem 0.5rem;
   border-bottom: 1px solid #e5e7eb;
