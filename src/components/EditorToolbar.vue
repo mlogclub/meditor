@@ -15,6 +15,7 @@
     <ToolbarDivider />
     <HorizontalRuleButton :editor="editor" />
     <LinkButton :editor="editor" />
+    <ImageUploadButton :editor="editor" />
     <ToolbarDivider />
     <AlignLeftButton :editor="editor" />
     <AlignCenterButton :editor="editor" />
@@ -23,7 +24,6 @@
     <TextColorButton :editor="editor" />
     <BackgroundColorButton :editor="editor" />
     <ToolbarDivider />
-    <ImageButton :editor="editor" />
   </div>
 </template>
 
@@ -41,13 +41,13 @@ import CodeBlockButton from './toolbar/CodeBlockButton.vue'
 import QuoteButton from './toolbar/QuoteButton.vue'
 import HorizontalRuleButton from './toolbar/HorizontalRuleButton.vue'
 import LinkButton from './toolbar/LinkButton.vue'
+import ImageUploadButton from './toolbar/ImageUploadButton.vue'
 import ToolbarDivider from './toolbar/ToolbarDivider.vue'
 import AlignLeftButton from './toolbar/AlignLeftButton.vue'
 import AlignCenterButton from './toolbar/AlignCenterButton.vue'
 import AlignRightButton from './toolbar/AlignRightButton.vue'
 import TextColorButton from './toolbar/TextColorButton.vue'
 import BackgroundColorButton from './toolbar/BackgroundColorButton.vue'
-import ImageButton from './toolbar/ImageButton.vue'
 import '../styles/toolbar.css'
 
 defineProps<{

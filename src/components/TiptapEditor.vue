@@ -1,7 +1,13 @@
 <template>
   <div class="editor-container">
     <EditorToolbar :editor="editor" />
-    <editor-content :editor="editor" class="editor-content" />
+    <ImageDropZone 
+      :editor="editor" 
+      @image-upload-error="handleImageUploadError"
+      class="editor-dropzone"
+    >
+      <editor-content :editor="editor" class="editor-content" />
+    </ImageDropZone>
   </div>
 </template>
 
@@ -25,19 +31,34 @@ import { FloatingMenu } from "@tiptap/extension-floating-menu";
 import {Image} from "./image/Image.ts";
 import { suggestion } from "./slash-commands";
 import EditorToolbar from "./EditorToolbar.vue";
+import { ImageUpload } from "../extensions/ImageUpload";
+import { uploadImage } from "../utils/imageUtils";
+import ImageDropZone from "./ImageDropZone.vue";
 
 import "tippy.js/dist/tippy.css";
 import "../styles/scrollbar.css";
 
 const props = defineProps<{
   modelValue: string;
+  // 自定义图片上传函数，可选
+  customImageUpload?: (file: File) => Promise<string>;
+  // 最大允许上传的文件大小（单位：字节），默认为5MB
+  maxImageSize?: number;
+  // 允许的图片格式，默认为常见图片格式
+  acceptImageTypes?: string[];
 }>();
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: string): void;
+  (e: "image-upload-error", error: Error, file?: File): void;
 }>();
 
 const editorRef = ref<Editor | null>(null);
+
+// 处理图片上传错误
+const handleImageUploadError = (error: Error, file?: File) => {
+  emit("image-upload-error", error, file);
+};
 
 const editor = useEditor({
   content: props.modelValue,
@@ -73,6 +94,24 @@ const editor = useEditor({
       multicolor: true,
     }),
     Image,
+    ImageUpload.configure({
+      // 使用自定义上传函数或默认的base64转换
+      uploadFn: props.customImageUpload || ((file: File) => {
+        return new Promise((resolve) => {
+          const reader = new FileReader()
+          reader.onload = () => resolve(reader.result as string)
+          reader.readAsDataURL(file)
+        })
+      }),
+      // 配置最大文件大小
+      maxFileSize: props.maxImageSize || 5 * 1024 * 1024, // 默认5MB
+      // 配置接受的MIME类型
+      acceptMimeTypes: props.acceptImageTypes || ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+      // 开启拖放上传
+      enableDragAndDrop: true,
+      // 错误处理
+      onError: handleImageUploadError
+    }),
   ],
   onCreate: ({ editor }) => {
     editorRef.value = editor;
@@ -114,6 +153,12 @@ onBeforeUnmount(() => {
   position: relative;
 }
 
+.editor-dropzone {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
 .editor-content {
   background: white;
   border-radius: 0 0 8px 8px;
@@ -123,6 +168,7 @@ onBeforeUnmount(() => {
   flex-direction: column;
   scrollbar-width: thin;
   scrollbar-color: #c1c1c1 #f1f1f1;
+  height: 100%;
 
   /* 暗色主题滚动条 */
   .dark & {
