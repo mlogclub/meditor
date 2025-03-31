@@ -1,0 +1,10 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+- 本项目基于 vue3 + tiptap + pnpm
+- 开发一个类似nation的富文本编辑器

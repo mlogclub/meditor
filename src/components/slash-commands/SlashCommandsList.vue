@@ -30,7 +30,6 @@ import {
   MinusSquare,
   Table as TableIcon,
 } from 'lucide-vue-next'
-import '../image-extension' // 导入ResizableImage扩展，确保setResizableImage命令可用
 
 export interface CommandItem {
   title: string

@@ -1,6 +1,5 @@
 import { Editor } from '@tiptap/core'
 import { computed } from 'vue'
-import '../components/image-extension' // 导入ResizableImage扩展，确保setResizableImage命令可用
 
 // 检查编辑器是否准备就绪
 export const useEditorReady = (editor: Editor | null | undefined) => {

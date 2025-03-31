@@ -15,7 +15,6 @@
     <ToolbarDivider />
     <HorizontalRuleButton :editor="editor" />
     <LinkButton :editor="editor" />
-    <ImageButton :editor="editor" />
     <ToolbarDivider />
     <AlignLeftButton :editor="editor" />
     <AlignCenterButton :editor="editor" />
@@ -40,7 +39,6 @@ import CodeBlockButton from './toolbar/CodeBlockButton.vue'
 import QuoteButton from './toolbar/QuoteButton.vue'
 import HorizontalRuleButton from './toolbar/HorizontalRuleButton.vue'
 import LinkButton from './toolbar/LinkButton.vue'
-import ImageButton from './toolbar/ImageButton.vue'
 import ToolbarDivider from './toolbar/ToolbarDivider.vue'
 import AlignLeftButton from './toolbar/AlignLeftButton.vue'
 import AlignCenterButton from './toolbar/AlignCenterButton.vue'

@@ -24,7 +24,6 @@ import { BubbleMenu } from "@tiptap/extension-bubble-menu";
 import { FloatingMenu } from "@tiptap/extension-floating-menu";
 import { suggestion } from "./slash-commands";
 import EditorToolbar from "./EditorToolbar.vue";
-import { ResizableImage } from "./image-extension";
 
 import "tippy.js/dist/tippy.css";
 import "../styles/scrollbar.css";
@@ -49,12 +48,6 @@ const editor = useEditor({
     TextStyle,
     Color.configure({
       types: ["textStyle"],
-    }),
-    ResizableImage.configure({
-      inline: true,
-      HTMLAttributes: {
-        class: "resizable-image",
-      },
     }),
     Link.configure({
       openOnClick: false,
