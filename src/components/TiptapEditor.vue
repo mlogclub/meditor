@@ -22,6 +22,7 @@ import Highlight from "@tiptap/extension-highlight";
 import { Editor } from "@tiptap/core";
 import { BubbleMenu } from "@tiptap/extension-bubble-menu";
 import { FloatingMenu } from "@tiptap/extension-floating-menu";
+import {Image} from "./image/Image.ts";
 import { suggestion } from "./slash-commands";
 import EditorToolbar from "./EditorToolbar.vue";
 
@@ -71,6 +72,7 @@ const editor = useEditor({
     Highlight.configure({
       multicolor: true,
     }),
+    Image,
   ],
   onCreate: ({ editor }) => {
     editorRef.value = editor;
@@ -99,7 +101,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style>
+<style lang="scss">
 .editor-container {
   border: 1px solid #e5e7eb;
   border-radius: 2px;
@@ -121,94 +123,92 @@ onBeforeUnmount(() => {
   flex-direction: column;
   scrollbar-width: thin;
   scrollbar-color: #c1c1c1 #f1f1f1;
-}
 
-/* 暗色主题滚动条 */
-.dark .editor-content {
-  scrollbar-color: #4a4a4a #2d2d2d;
-}
+  /* 暗色主题滚动条 */
+  .dark & {
+    scrollbar-color: #4a4a4a #2d2d2d;
+  }
 
-.editor-content .ProseMirror {
-  flex: 1;
-  /* height: 100%;
-  width: 100%; */
-  outline: none;
-  padding: 1rem;
-}
+  .ProseMirror {
+    flex: 1;
+    outline: none;
+    padding: 1rem;
+  }
 
-/* 调整可调整大小图片样式 */
-.editor-content .node-resizableImage {
-  margin: 1em 0;
-  display: inline-block;
-  max-width: 100%;
-}
+  /* 调整可调整大小图片样式 */
+  .node-resizableImage {
+    margin: 1em 0;
+    display: inline-block;
+    max-width: 100%;
+  }
 
-/* 确保图片不会超出容器 */
-.editor-content .resizable-image-wrapper {
-  max-width: 100%;
-}
+  /* 确保图片不会超出容器 */
+  .resizable-image-wrapper {
+    max-width: 100%;
+  }
 
-.editor-content p {
-  margin: 0.5em 0;
-  line-height: 1.5;
-}
+  p {
+    margin: 0.5em 0;
+    line-height: 1.5;
+  }
 
-.editor-content ul,
-.editor-content ol {
-  padding: 0 1.5rem;
-  margin: 0.75em 0;
-}
+  ul,
+  ol {
+    padding: 0 1.5rem;
+    margin: 0.75em 0;
+  }
 
-.editor-content pre {
-  background: #1f2937;
-  color: #fff;
-  padding: 1rem;
-  border-radius: 6px;
-  margin: 1em 0;
-  overflow-x: auto;
-}
+  pre {
+    background: #1f2937;
+    color: #fff;
+    padding: 1rem;
+    border-radius: 6px;
+    margin: 1em 0;
+    overflow-x: auto;
 
-.editor-content pre code {
-  color: inherit;
-  padding: 0;
-  background: none;
-  font-size: 0.9rem;
-  font-family: "Fira Code", monospace;
-}
+    code {
+      color: inherit;
+      padding: 0;
+      background: none;
+      font-size: 0.9rem;
+      font-family: "Fira Code", monospace;
+    }
+  }
 
-.editor-content img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 6px;
-  margin: 1em 0;
-}
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 1em 0;
+  }
 
-.editor-content blockquote {
-  padding: 0.5rem 1rem;
-  border-left: 3px solid #e5e7eb;
-  margin: 1em 0;
-  color: #6b7280;
-  background: #f9fafb;
-  border-radius: 0 6px 6px 0;
-}
+  blockquote {
+    padding: 0.5rem 1rem;
+    border-left: 3px solid #e5e7eb;
+    margin: 1em 0;
+    color: #6b7280;
+    background: #f9fafb;
+    border-radius: 0 6px 6px 0;
+  }
 
-.editor-content h1 {
-  font-size: 2em;
-  margin: 1em 0 0.5em;
-  color: #111827;
-}
+  h1 {
+    font-size: 2em;
+    margin: 1em 0 0.5em;
+    color: #111827;
+  }
 
-.editor-content h2 {
-  font-size: 1.5em;
-  margin: 0.75em 0 0.5em;
-  color: #1f2937;
-}
+  h2 {
+    font-size: 1.5em;
+    margin: 0.75em 0 0.5em;
+    color: #1f2937;
+  }
 
-.editor-content code {
-  background: #f3f4f6;
-  padding: 0.2em 0.4em;
-  border-radius: 4px;
-  font-size: 0.9em;
-  color: #1f2937;
+  code {
+    background: #f3f4f6;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #1f2937;
+  }
 }
 </style>
