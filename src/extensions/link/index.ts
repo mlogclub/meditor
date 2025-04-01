@@ -2,6 +2,9 @@ import { mergeAttributes } from '@tiptap/core'
 import Link from '@tiptap/extension-link'
 import { VueRenderer } from '@tiptap/vue-3'
 import LinkDialog from './LinkDialog.vue'
+import tippy from 'tippy.js'
+import 'tippy.js/dist/tippy.css'
+import 'tippy.js/themes/light.css'
 
 export interface LinkOptions {
   openOnClick: boolean
@@ -92,12 +95,6 @@ export const CustomLink = Link.extend<LinkOptions>({
           const currentUrl = linkAttributes.href || ''
           const currentOpenInNewTab = linkAttributes.target === '_blank'
 
-          // Create dialog container
-          const container = document.createElement('div')
-          container.style.position = 'fixed'
-          container.style.zIndex = '1000'
-          document.body.appendChild(container)
-
           // Create Vue renderer
           const renderer = new VueRenderer(LinkDialog, {
             props: {
@@ -109,16 +106,35 @@ export const CustomLink = Link.extend<LinkOptions>({
             editor,
           })
 
-          // Mount dialog
-          container.appendChild(renderer.element)
+          // Create tippy instance
+          const tippyInstance = tippy(document.body, {
+            getReferenceClientRect: () => {
+              const { from, to } = editor.state.selection
+              const start = editor.view.coordsAtPos(from)
+              const end = editor.view.coordsAtPos(to)
+              return new DOMRect(
+                Math.min(start.left, end.left),
+                Math.min(start.top, end.top),
+                Math.abs(end.left - start.left),
+                Math.abs(end.bottom - start.top)
+              )
+            },
+            content: renderer.element,
+            showOnCreate: true,
+            interactive: true,
+            trigger: 'manual',
+            placement: 'bottom',
+            theme: 'light',
+            arrow: true,
+            onHide: () => {
+              renderer.destroy()
+            },
+          })
 
           // Handle dialog close
-          const handleClose = () => {
-            renderer.destroy()
-          }
-
-          // Add close event listener
-          renderer.element.addEventListener('close', handleClose)
+          renderer.element.addEventListener('close', () => {
+            tippyInstance.destroy()
+          })
 
           return true
         },

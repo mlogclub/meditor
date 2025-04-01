@@ -18,6 +18,7 @@
 
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue'
+import type { CommandItem } from './types'
 
 const props = defineProps<{
   items: CommandItem[]

@@ -1,40 +1,38 @@
 <template>
   <div class="link-dialog">
-    <div class="dialog-content">
-      <div class="form-group">
-        <label for="text">链接文本</label>
+    <div class="form-group">
+      <label for="text">链接文本</label>
+      <input
+        id="text"
+        v-model="text"
+        type="text"
+        class="form-input"
+        placeholder="输入链接文本"
+      />
+    </div>
+    <div class="form-group">
+      <label for="url">链接地址</label>
+      <input
+        id="url"
+        v-model="url"
+        type="text"
+        class="form-input"
+        placeholder="输入链接地址"
+      />
+    </div>
+    <div class="form-group">
+      <label class="checkbox-label">
         <input
-          id="text"
-          v-model="text"
-          type="text"
-          class="form-input"
-          placeholder="输入链接文本"
+          type="checkbox"
+          v-model="openInNewTab"
+          class="checkbox-input"
         />
-      </div>
-      <div class="form-group">
-        <label for="url">链接地址</label>
-        <input
-          id="url"
-          v-model="url"
-          type="text"
-          class="form-input"
-          placeholder="输入链接地址"
-        />
-      </div>
-      <div class="form-group">
-        <label class="checkbox-label">
-          <input
-            type="checkbox"
-            v-model="openInNewTab"
-            class="checkbox-input"
-          />
-          在新窗口打开
-        </label>
-      </div>
-      <div class="dialog-actions">
-        <button class="btn btn-cancel" @click="handleCancel">取消</button>
-        <button class="btn btn-confirm" @click="handleConfirm">确定</button>
-      </div>
+        在新窗口打开
+      </label>
+    </div>
+    <div class="dialog-actions">
+      <button class="btn btn-cancel" @click="handleCancel">取消</button>
+      <button class="btn btn-confirm" @click="handleConfirm">确定</button>
     </div>
   </div>
 </template>
@@ -100,44 +98,28 @@ onMounted(() => {
 
 <style scoped>
 .link-dialog {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.dialog-content {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   color: #374151;
   font-weight: 500;
+  font-size: 0.875rem;
 }
 
 .form-input {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.375rem 0.5rem;
   border: 1px solid #d1d5db;
   border-radius: 4px;
   font-size: 0.875rem;
+  line-height: 1.25;
 }
 
 .form-input:focus {
@@ -149,15 +131,14 @@ label {
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.375rem;
   cursor: pointer;
+  font-size: 0.875rem;
 }
 
 .checkbox-input {
-  width: 1rem;
-  height: 1rem;
   border: 1px solid #d1d5db;
-  border-radius: 4px;
+  border-radius: 3px;
   cursor: pointer;
 }
 
@@ -165,11 +146,11 @@ label {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 }
 
 .btn {
-  padding: 0.5rem 1rem;
+  padding: 0.375rem 0.75rem;
   border-radius: 4px;
   font-size: 0.875rem;
   font-weight: 500;
@@ -198,7 +179,7 @@ label {
 }
 
 /* Dark mode styles */
-:root.dark .dialog-content {
+:root.dark .link-dialog {
   background: #1f2937;
   color: #f9fafb;
 }
