@@ -1,8 +1,8 @@
 <template>
   <div class="editor-container">
     <EditorToolbar :editor="editor" />
-    <ImageDropZone 
-      :editor="editor" 
+    <ImageDropZone
+      :editor="editor"
       @image-upload-error="handleImageUploadError"
       class="editor-dropzone"
     >
@@ -28,7 +28,7 @@ import Highlight from "@tiptap/extension-highlight";
 import { Editor } from "@tiptap/core";
 import { BubbleMenu } from "@tiptap/extension-bubble-menu";
 import { FloatingMenu } from "@tiptap/extension-floating-menu";
-import {Image} from "./image/Image.ts";
+import { Image } from "../extensions/image";
 import { SlashSuggestion } from "../extensions/slash";
 import EditorToolbar from "./EditorToolbar.vue";
 import { ImageUpload } from "../extensions/image-upload";
@@ -96,21 +96,28 @@ const editor = useEditor({
     Image,
     ImageUpload.configure({
       // 使用自定义上传函数或默认的base64转换
-      uploadFn: props.customImageUpload || ((file: File) => {
-        return new Promise((resolve) => {
-          const reader = new FileReader()
-          reader.onload = () => resolve(reader.result as string)
-          reader.readAsDataURL(file)
-        })
-      }),
+      uploadFn:
+        props.customImageUpload ||
+        ((file: File) => {
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.readAsDataURL(file);
+          });
+        }),
       // 配置最大文件大小
       maxFileSize: props.maxImageSize || 5 * 1024 * 1024, // 默认5MB
       // 配置接受的MIME类型
-      acceptMimeTypes: props.acceptImageTypes || ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+      acceptMimeTypes: props.acceptImageTypes || [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ],
       // 开启拖放上传
       enableDragAndDrop: true,
       // 错误处理
-      onError: handleImageUploadError
+      onError: handleImageUploadError,
     }),
   ],
   onCreate: ({ editor }) => {
