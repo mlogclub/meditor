@@ -195,13 +195,19 @@ onBeforeUnmount(() => {
 
   &__body {
     position: relative;
-    display: inline-block;
+    display: flex;
     max-width: 100%;
     outline: transparent solid 2px;
     transition: all 0.2s ease-in;
 
+    &:hover {
+      .image-resizer {
+        opacity: 1;
+      }
+    }
+
     &--focused {
-      @apply outline-primary;
+      outline: 2px solid #18181b;
     }
 
     &__image {
@@ -218,7 +224,8 @@ onBeforeUnmount(() => {
   z-index: 1;
   width: 100%;
   height: 100%;
-  @apply border border-border;
+  opacity: 0;
+  transition: opacity 0.2s ease-in;
 
   &__handler {
     position: absolute;
@@ -227,9 +234,14 @@ onBeforeUnmount(() => {
     display: block;
     width: 12px;
     height: 12px;
-    border: 1px solid #fff;
+    border: 2px solid #fff;
     border-radius: 2px;
-    @apply bg-primary;
+    transition: transform 0.2s ease-in;
+    background-color: #18181b;
+
+    &:hover {
+      transform: scale(1.2);
+    }
 
     &--tl {
       top: -6px;
@@ -250,8 +262,8 @@ onBeforeUnmount(() => {
     }
 
     &--br {
-      right: -6px;
       bottom: -6px;
+      right: -6px;
       cursor: se-resize;
     }
   }
