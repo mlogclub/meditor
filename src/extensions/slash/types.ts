@@ -10,6 +10,7 @@ import {
     Image as ImageIcon,
     MinusSquare,
     Table as TableIcon,
+    Link as LinkIcon,
 } from 'lucide-vue-next'
 
 export interface CommandItem {
@@ -98,6 +99,14 @@ export const getSuggestionItems = () => [
                 .deleteRange(range)
                 .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
                 .run()
+        },
+    },
+    {
+        title: '链接',
+        description: '插入链接',
+        icon: LinkIcon,
+        command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
+            editor.commands.openLinkDialog()
         },
     },
 ]

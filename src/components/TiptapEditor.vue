@@ -13,7 +13,7 @@ import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
-import Link from "@tiptap/extension-link";
+import { CustomLink } from "../extensions/link";
 import Table from "@tiptap/extension-table";
 import TableRow from "@tiptap/extension-table-row";
 import TableCell from "@tiptap/extension-table-cell";
@@ -60,14 +60,11 @@ const editor = useEditor({
       types: ["heading", "paragraph"],
     }),
     TextStyle,
-    Color.configure({
-      types: ["textStyle"],
-    }),
-    Link.configure({
+    Color,
+    CustomLink.configure({
       openOnClick: false,
       HTMLAttributes: {
         rel: "noopener noreferrer",
-        class: "text-blue-500",
       },
     }),
     Table.configure({

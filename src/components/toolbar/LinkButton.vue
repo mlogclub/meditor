@@ -13,13 +13,14 @@ import { Editor } from '@tiptap/core'
 import { LucideLink } from 'lucide-vue-next'
 import ToolbarButton from './ToolbarButton.vue'
 import { TOOLBAR_ICON_SIZE } from '../../constants/editor'
-import { setLink } from '../../utils/editorUtils'
 
 const props = defineProps<{
   editor: Editor | null | undefined
 }>()
 
 const handleSetLink = () => {
-  setLink(props.editor)
+  if (!props.editor) return
+  // props.editor.commands.openLinkDialog()
+  props.editor?.chain().focus().openLinkDialog()
 }
 </script> 
