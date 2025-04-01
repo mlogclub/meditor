@@ -2,11 +2,11 @@ import { Extension } from '@tiptap/core'
 import Suggestion from '@tiptap/suggestion'
 import type { Editor } from '@tiptap/core'
 import { VueRenderer } from '@tiptap/vue-3'
-import SlashCommandsList from './SlashCommandsList.vue'
-import type { CommandItem } from './SlashCommandsList.vue'
-import { getSuggestionItems } from './SlashCommandsList.vue'
+import SlashCommandsList from './SlashCommands.vue'
+import type { CommandItem } from './SlashCommands.vue'
+import { getSuggestionItems } from './SlashCommands.vue'
 
-export const suggestion = Extension.create({
+export const SlashSuggestion = Extension.create({
   name: 'slash-commands',
 
   addOptions() {

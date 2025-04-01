@@ -29,9 +29,9 @@ import { Editor } from "@tiptap/core";
 import { BubbleMenu } from "@tiptap/extension-bubble-menu";
 import { FloatingMenu } from "@tiptap/extension-floating-menu";
 import {Image} from "./image/Image.ts";
-import { suggestion } from "./slash-commands";
+import { SlashSuggestion } from "../extensions/slash";
 import EditorToolbar from "./EditorToolbar.vue";
-import { ImageUpload } from "../extensions/ImageUpload";
+import { ImageUpload } from "../extensions/image-upload";
 import { uploadImage } from "../utils/imageUtils";
 import ImageDropZone from "./ImageDropZone.vue";
 
@@ -87,7 +87,7 @@ const editor = useEditor({
     TableRow,
     TableHeader,
     TableCell,
-    suggestion,
+    SlashSuggestion,
     BubbleMenu,
     FloatingMenu,
     Highlight.configure({
