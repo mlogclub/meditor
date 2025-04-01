@@ -202,6 +202,12 @@ export const ImageUpload = Extension.create<ImageUploadOptions>({
               return false
             }
             
+            // 检查是否拖拽到了编辑器内容区域
+            const target = event.target as HTMLElement
+            if (target.closest('.ProseMirror')) {
+              return false // 让 ImageDropZone 处理这种情况
+            }
+            
             const files = Array.from(event.dataTransfer.files)
             const imageFiles = files.filter(file => 
               extensionThis.options.acceptMimeTypes.includes(file.type)

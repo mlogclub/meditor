@@ -60,6 +60,12 @@ const handleDrop = async (event: DragEvent) => {
     return
   }
   
+  // 检查是否拖拽到了编辑器内容区域
+  const target = event.target as HTMLElement
+  if (!target.closest('.ProseMirror')) {
+    return
+  }
+  
   const files = Array.from(event.dataTransfer.files).filter(
     file => file.type.startsWith('image/')
   )
