@@ -1,13 +1,7 @@
 <template>
   <div class="editor-container">
     <EditorToolbar :editor="editor" />
-    <ImageDropZone
-      :editor="editor"
-      @image-upload-error="handleImageUploadError"
-      class="editor-dropzone"
-    >
-      <editor-content :editor="editor" class="editor-content" />
-    </ImageDropZone>
+    <editor-content :editor="editor" class="editor-content" />
   </div>
 </template>
 
@@ -32,8 +26,6 @@ import { Image } from "../extensions/image";
 import { SlashSuggestion } from "../extensions/slash";
 import EditorToolbar from "./EditorToolbar.vue";
 import { ImageUpload } from "../extensions/image-upload";
-import { uploadImage } from "../utils/imageUtils";
-import ImageDropZone from "./ImageDropZone.vue";
 
 import "tippy.js/dist/tippy.css";
 import "../styles/scrollbar.css";
