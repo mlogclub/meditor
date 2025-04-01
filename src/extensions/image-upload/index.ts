@@ -49,7 +49,7 @@ export const ImageUpload = Extension.create<ImageUploadOptions>({
 
   addCommands() {
     return {
-      openImageUpload: () => ({ commands }) => {
+      openImageUpload: () => ({ commands, view }) => {
         // 创建一个隐藏的文件输入
         const input = document.createElement('input')
         input.type = 'file'
@@ -75,7 +75,7 @@ export const ImageUpload = Extension.create<ImageUploadOptions>({
               
               // 使用提供的上传函数
               const src = await this.options.uploadFn(file)
-              
+
               // 获取图片尺寸
               const dimensions = await new Promise<{ width: number; height: number }>((resolve) => {
                 const img = new Image()
@@ -88,13 +88,16 @@ export const ImageUpload = Extension.create<ImageUploadOptions>({
                 img.src = src
               })
               
-              // 使用setImage命令插入图片
-              commands.setImage({
-                src,
-                alt: file.name,
-                title: file.name,
-                width: dimensions.width,
-              })
+              const transaction = view.state.tr.replaceSelectionWith(
+                view.state.schema.nodes.image.create({
+                  src,
+                  alt: file.name,
+                  title: file.name,
+                  width: dimensions.width,
+                })
+              )
+
+              view.dispatch(transaction)
             } catch (error) {
               if (error instanceof Error && this.options.onError) {
                 this.options.onError(error, file)
