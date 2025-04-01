@@ -2,7 +2,13 @@
 import TiptapEditor from './components/TiptapEditor.vue'
 import { ref } from 'vue'
 
-const content = ref('<p>Hello World!</p>')
+const content = ref(`
+<p>Hello World!</p>
+<p>Hello World!</p>
+<p>Hello World!</p>
+<p>Hello World!</p>
+<p>Hello World!</p>
+`)
 </script>
 
 <template>

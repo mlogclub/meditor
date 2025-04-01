@@ -45,8 +45,9 @@ export const fileToDataUrl = (file: File): Promise<string> => {
  * 上传图片
  * @param editor 编辑器实例
  * @param file 图片文件
+ * @param position 可选的插入位置
  */
-export const uploadImage = async (editor: Editor, file: File): Promise<void> => {
+export const uploadImage = async (editor: Editor, file: File, position?: number): Promise<string> => {
   try {
     // 读取图片为DataURL
     const dataUrl = await fileToDataUrl(file)
@@ -57,19 +58,34 @@ export const uploadImage = async (editor: Editor, file: File): Promise<void> => 
     // 计算图片宽度，确保不超过最大宽度
     const width = Math.min(dimensions.width, IMAGE_MAX_SIZE)
     
-    // 将图片插入编辑器
-    editor.chain().focus().setImage({
-      src: dataUrl,
-      alt: file.name,
-      title: file.name,
-      width,
-    }).run()
+    if (position !== undefined) {
+      // 在指定位置插入图片
+      const imageNode = editor.view.state.schema.nodes.image.create({
+        src: dataUrl,
+        alt: file.name,
+        title: file.name,
+        width,
+      });
+      
+      const transaction = editor.view.state.tr.insert(position, imageNode);
+      editor.view.dispatch(transaction);
+    } else {
+      // 在当前光标位置插入图片
+      editor.chain().focus().setImage({
+        src: dataUrl,
+        alt: file.name,
+        title: file.name,
+        width,
+      }).run()
+    }
     
     // 可以在这里添加成功提示
     console.log('图片上传成功')
+    return dataUrl
   } catch (error) {
     console.error('图片上传失败:', error)
     // 可以在这里添加错误提示
+    throw error
   }
 }
 

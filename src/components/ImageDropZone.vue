@@ -62,7 +62,8 @@ const handleDrop = async (event: DragEvent) => {
   
   // 检查是否拖拽到了编辑器内容区域
   const target = event.target as HTMLElement
-  if (!target.closest('.ProseMirror')) {
+  const proseMirror = target.closest('.ProseMirror')
+  if (!proseMirror) {
     return
   }
   
@@ -74,12 +75,23 @@ const handleDrop = async (event: DragEvent) => {
     return
   }
   
+  // 获取拖放位置
+  const coordinates = props.editor.view.posAtCoords({
+    left: event.clientX,
+    top: event.clientY,
+  })
+  
+  if (!coordinates) {
+    return
+  }
+  
   // 处理每个图片文件
   for (const file of files) {
     try {
       emit('image-upload-start')
-      await uploadImage(props.editor, file)
-      emit('image-upload-success', URL.createObjectURL(file))
+      const src = await uploadImage(props.editor, file, coordinates.pos)
+      
+      emit('image-upload-success', src)
     } catch (error) {
       emit('image-upload-error', error instanceof Error ? error : new Error(String(error)))
     }
