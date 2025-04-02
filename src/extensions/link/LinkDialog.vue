@@ -2,33 +2,40 @@
   <div class="link-dialog">
     <div class="form-group">
       <label for="text">链接文本</label>
-      <input
-        id="text"
-        v-model="text"
-        type="text"
-        class="form-input"
-        placeholder="输入链接文本"
-      />
+      <div>
+        <input
+          id="text"
+          v-model="text"
+          type="text"
+          class="form-input"
+          placeholder="输入链接文本"
+        />
+      </div>
     </div>
     <div class="form-group">
       <label for="url">链接地址</label>
-      <input
-        id="url"
-        v-model="url"
-        type="text"
-        class="form-input"
-        placeholder="输入链接地址"
-      />
+      <div>
+        <input
+          id="url"
+          v-model="url"
+          type="text"
+          class="form-input"
+          placeholder="输入链接地址"
+        />
+      </div>
     </div>
     <div class="form-group">
-      <label class="checkbox-label">
-        <input
-          type="checkbox"
-          v-model="openInNewTab"
-          class="checkbox-input"
-        />
-        在新窗口打开
-      </label>
+      <label></label>
+      <div class="input">
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            v-model="openInNewTab"
+            class="checkbox-input"
+          />
+          在新窗口打开
+        </label>
+      </div>
     </div>
     <div class="dialog-actions">
       <button class="btn btn-cancel" @click="handleCancel">取消</button>
@@ -38,29 +45,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { Editor } from '@tiptap/core'
+import { ref, onMounted } from "vue";
+import { Editor } from "@tiptap/core";
 
 const props = defineProps<{
-  editor: Editor
-  initialText?: string
-  initialUrl?: string
-  initialOpenInNewTab?: boolean
-}>()
+  editor: Editor;
+  initialText?: string;
+  initialUrl?: string;
+  initialOpenInNewTab?: boolean;
+}>();
 
 const emit = defineEmits<{
-  (e: 'close'): void
-}>()
+  (e: "close"): void;
+}>();
 
-const text = ref(props.initialText || '')
-const url = ref(props.initialUrl || '')
-const openInNewTab = ref(props.initialOpenInNewTab || false)
+const text = ref(props.initialText || "");
+const url = ref(props.initialUrl || "");
+const openInNewTab = ref(props.initialOpenInNewTab || false);
 
 const handleConfirm = () => {
   const attributes = {
     href: url.value,
-    ...(openInNewTab.value ? { target: '_blank', rel: 'noopener noreferrer' } : {})
-  }
+    ...(openInNewTab.value
+      ? { target: "_blank", rel: "noopener noreferrer" }
+      : {}),
+  };
 
   if (text.value) {
     // If there's text, replace the selection with the new text
@@ -68,144 +77,157 @@ const handleConfirm = () => {
       .chain()
       .focus()
       .deleteRange(props.editor.state.selection)
-      .insertContent({ type: 'text', text: text.value })
+      .insertContent({ type: "text", text: text.value })
       .setLink(attributes)
-      .run()
+      .run();
   } else {
     // If no text, just set the link on the current selection
-    props.editor
-      .chain()
-      .focus()
-      .setLink(attributes)
-      .run()
+    props.editor.chain().focus().setLink(attributes).run();
   }
 
-  emit('close')
-}
+  emit("close");
+};
 
 const handleCancel = () => {
-  emit('close')
-}
+  emit("close");
+};
 
 onMounted(() => {
   // Focus the URL input on mount
-  const urlInput = document.getElementById('url') as HTMLInputElement
+  const urlInput = document.getElementById("url") as HTMLInputElement;
   if (urlInput) {
-    urlInput.focus()
+    urlInput.focus();
   }
-})
+});
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+$primary-color: #3b82f6;
+$primary-hover: #2563eb;
+$border-color: #d1d5db;
+$text-color: #374151;
+$bg-light: #f3f4f6;
+$bg-hover: #e5e7eb;
+
 .link-dialog {
-  padding: 0.5rem;
-}
-
-.form-group {
-  margin-bottom: 0.75rem;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.25rem;
-  color: #374151;
-  font-weight: 500;
-  font-size: 0.875rem;
-}
-
-.form-input {
-  width: 100%;
-  padding: 0.375rem 0.5rem;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  line-height: 1.25;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-}
-
-.checkbox-label {
+  padding: 10px;
   display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-}
+  flex-direction: column;
+  gap: 15px;
 
-.checkbox-input {
-  border: 1px solid #d1d5db;
-  border-radius: 3px;
-  cursor: pointer;
-}
+  .form-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 
-.dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
+    & > label {
+      width: 60px;
+      color: $text-color;
+      // font-weight: 500;
+      font-size: 14px;
+      text-align: right;
+    }
 
-.btn {
-  padding: 0.375rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
+    & > div {
+      flex: 1;
+      display: flex;
+      width: 100%;
+      .form-input {
+        width: 100%;
+        padding: 0.375rem 0.5rem;
+        border: 1px solid $border-color;
+        border-radius: 4px;
+        font-size: 14px;
+        line-height: 1.25;
 
-.btn-cancel {
-  background: #f3f4f6;
-  border: 1px solid #d1d5db;
-  color: #374151;
-}
+        &:focus {
+          outline: none;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+        }
+      }
 
-.btn-cancel:hover {
-  background: #e5e7eb;
-}
+      .checkbox-label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 14px;
 
-.btn-confirm {
-  background: #3b82f6;
-  border: none;
-  color: white;
-}
+        .checkbox-input {
+          border: 1px solid $border-color;
+          border-radius: 3px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
 
-.btn-confirm:hover {
-  background: #2563eb;
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .btn {
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &-cancel {
+      background: $bg-light;
+      border: 1px solid $border-color;
+      color: $text-color;
+
+      &:hover {
+        background: $bg-hover;
+      }
+    }
+
+    &-confirm {
+      background: $primary-color;
+      border: none;
+      color: white;
+
+      &:hover {
+        background: $primary-hover;
+      }
+    }
+  }
 }
 
 /* Dark mode styles */
-:root.dark .link-dialog {
-  background: #1f2937;
-  color: #f9fafb;
-}
+:root.dark {
+  .link-dialog {
+    background: #1f2937;
+    color: #f9fafb;
 
-:root.dark label {
-  color: #f9fafb;
-}
+    label {
+      color: #f9fafb;
+    }
 
-:root.dark .form-input {
-  background: #374151;
-  border-color: #4b5563;
-  color: #f9fafb;
-}
+    .form-input {
+      background: #374151;
+      border-color: #4b5563;
+      color: #f9fafb;
 
-:root.dark .form-input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-}
+      &:focus {
+        border-color: $primary-color;
+        box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+      }
+    }
 
-:root.dark .btn-cancel {
-  background: #374151;
-  border-color: #4b5563;
-  color: #f9fafb;
-}
+    .btn-cancel {
+      background: #374151;
+      border-color: #4b5563;
+      color: #f9fafb;
 
-:root.dark .btn-cancel:hover {
-  background: #4b5563;
+      &:hover {
+        background: #4b5563;
+      }
+    }
+  }
 }
-</style> 
+</style>

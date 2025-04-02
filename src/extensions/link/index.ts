@@ -126,6 +126,10 @@ export const CustomLink = Link.extend<LinkOptions>({
             placement: 'bottom',
             theme: 'light',
             arrow: true,
+            maxWidth: 'none',
+            onCreate: (instance) => {
+              instance.popper.style.width = '400px';
+            },
             onHide: () => {
               renderer.destroy()
             },
