@@ -12,14 +12,14 @@ export interface LinkOptions {
 }
 
 declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        customLink: {
-            setLink: (attributes: { href: string; target?: string; rel?: string; class?: string }) => ReturnType
-            toggleLink: (attributes: { href: string; target?: string; rel?: string; class?: string }) => ReturnType
-            unsetLink: () => ReturnType
-            openLinkDialog: () => ReturnType
-        }
+  interface Commands<ReturnType> {
+    customLink: {
+      setLink: (attributes: { href: string; target?: string; rel?: string; class?: string }) => ReturnType
+      toggleLink: (attributes: { href: string; target?: string; rel?: string; class?: string }) => ReturnType
+      unsetLink: () => ReturnType
+      openLinkDialog: () => ReturnType
     }
+  }
 }
 
 export const CustomLink = Link.extend<LinkOptions>({
@@ -70,78 +70,115 @@ export const CustomLink = Link.extend<LinkOptions>({
       ...this.parent?.(),
       setLink:
         attributes =>
-        ({ commands }) => {
-          return commands.setMark(this.name, attributes)
-        },
+          ({ commands }) => {
+            return commands.setMark(this.name, attributes)
+          },
       toggleLink:
         attributes =>
-        ({ commands }) => {
-          return commands.toggleMark(this.name, attributes)
-        },
+          ({ commands }) => {
+            return commands.toggleMark(this.name, attributes)
+          },
       unsetLink:
         () =>
-        ({ commands }) => {
-          return commands.unsetMark(this.name)
-        },
+          ({ commands }) => {
+            return commands.unsetMark(this.name)
+          },
       openLinkDialog:
         () =>
-        ({ editor }) => {
-          // Get the selected text
-          const { from, to } = editor.state.selection
-          const selectedText = editor.state.doc.textBetween(from, to)
+          ({ editor }) => {
+            // Get the selected text
+            const { from, to } = editor.state.selection
+            const selectedText = editor.state.doc.textBetween(from, to)
 
-          // Get current link attributes if exists
-          const linkAttributes = editor.getAttributes('link')
-          const currentUrl = linkAttributes.href || ''
-          const currentOpenInNewTab = linkAttributes.target === '_blank'
+            // Get current link attributes if exists
+            const linkAttributes = editor.getAttributes('link')
+            const currentUrl = linkAttributes.href || ''
+            const currentOpenInNewTab = linkAttributes.target === '_blank'
 
-          // Create Vue renderer
-          const renderer = new VueRenderer(LinkDialog, {
-            props: {
+            // Create Vue renderer
+            const renderer = new VueRenderer(LinkDialog, {
+              props: {
+                editor,
+                initialText: selectedText,
+                initialUrl: currentUrl,
+                initialOpenInNewTab: currentOpenInNewTab,
+              },
               editor,
-              initialText: selectedText,
-              initialUrl: currentUrl,
-              initialOpenInNewTab: currentOpenInNewTab,
-            },
-            editor,
-          })
+            })
 
-          // Create tippy instance
-          const tippyInstance = tippy(document.body, {
-            getReferenceClientRect: () => {
-              const { from, to } = editor.state.selection
-              const start = editor.view.coordsAtPos(from)
-              const end = editor.view.coordsAtPos(to)
-              return new DOMRect(
-                Math.min(start.left, end.left),
-                Math.min(start.top, end.top),
-                Math.abs(end.left - start.left),
-                Math.abs(end.bottom - start.top)
-              )
-            },
-            content: renderer.element,
-            showOnCreate: true,
-            interactive: true,
-            trigger: 'manual',
-            placement: 'bottom',
-            theme: 'light',
-            arrow: true,
-            maxWidth: 'none',
-            onCreate: (instance) => {
-              instance.popper.style.width = '400px';
-            },
-            onHide: () => {
-              renderer.destroy()
-            },
-          })
+            // Create tippy instance
+            const tippyInstance = tippy(document.body, {
+              getReferenceClientRect: () => {
+                const { from, to } = editor.state.selection
+                const start = editor.view.coordsAtPos(from)
+                const end = editor.view.coordsAtPos(to)
+                return new DOMRect(
+                  Math.min(start.left, end.left),
+                  Math.min(start.top, end.top),
+                  Math.abs(end.left - start.left),
+                  Math.abs(end.bottom - start.top)
+                )
+              },
+              content: renderer.element,
+              showOnCreate: true,
+              interactive: true,
+              trigger: 'manual',
+              placement: 'bottom',
+              theme: 'light',
+              arrow: true,
+              maxWidth: 'none',
+              onCreate: (instance) => {
+                instance.popper.style.width = '400px';
+              },
+              onHide: () => {
+                renderer.destroy()
+              },
+              onDestroy: () => {
+                cleanup()
+              }
+            })
 
-          // Handle dialog close
-          renderer.element.addEventListener('close', () => {
-            tippyInstance.destroy()
-          })
+            // 处理链接确认事件
+            const handleConfirm = (event: CustomEvent) => {
+              const { text, attributes } = event.detail
 
-          return true
-        },
+              if (text) {
+                // 如果有文本，替换选中内容
+                editor
+                  .chain()
+                  .focus()
+                  .deleteRange(editor.state.selection)
+                  .insertContent({ type: 'text', text })
+                  .setLink(attributes)
+                  .run()
+              } else {
+                // 如果没有文本，只设置链接
+                editor.chain().focus().setLink(attributes).run()
+              }
+
+              // 关闭弹窗
+              tippyInstance.hide()
+              tippyInstance.destroy()
+            }
+
+            // 处理取消事件
+            const handleCancel = () => {
+              // 关闭弹窗
+              tippyInstance.hide()
+              tippyInstance.destroy()
+            }
+
+            // 添加文档级事件监听器
+            document.addEventListener('confirm', handleConfirm)
+            document.addEventListener('cancel', handleCancel)
+
+            // 在tippy销毁时清理事件监听器
+            const cleanup = () => {
+              document.removeEventListener('confirm', handleConfirm)
+              document.removeEventListener('cancel', handleCancel)
+            }
+            return true
+          },
     }
   },
 }) 

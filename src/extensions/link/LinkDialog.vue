@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { Editor } from "@tiptap/core";
 
 const props = defineProps<{
@@ -55,13 +55,19 @@ const props = defineProps<{
   initialOpenInNewTab?: boolean;
 }>();
 
-const emit = defineEmits<{
-  (e: "close"): void;
-}>();
-
 const text = ref(props.initialText || "");
 const url = ref(props.initialUrl || "");
 const openInNewTab = ref(props.initialOpenInNewTab || false);
+
+// 创建自定义事件
+const createCustomEvent = (name: string, detail?: any) => {
+  const event = new CustomEvent(name, {
+    bubbles: true,
+    cancelable: true,
+    detail
+  });
+  return event;
+};
 
 const handleConfirm = () => {
   const attributes = {
@@ -70,26 +76,19 @@ const handleConfirm = () => {
       ? { target: "_blank", rel: "noopener noreferrer" }
       : {}),
   };
-
-  if (text.value) {
-    // If there's text, replace the selection with the new text
-    props.editor
-      .chain()
-      .focus()
-      .deleteRange(props.editor.state.selection)
-      .insertContent({ type: "text", text: text.value })
-      .setLink(attributes)
-      .run();
-  } else {
-    // If no text, just set the link on the current selection
-    props.editor.chain().focus().setLink(attributes).run();
-  }
-
-  emit("close");
+  
+  // 创建并分发确认事件
+  const confirmEvent = createCustomEvent('confirm', { 
+    text: text.value, 
+    attributes 
+  });
+  document.dispatchEvent(confirmEvent);
 };
 
 const handleCancel = () => {
-  emit("close");
+  // 创建并分发取消事件
+  const cancelEvent = createCustomEvent('cancel');
+  document.dispatchEvent(cancelEvent);
 };
 
 onMounted(() => {
