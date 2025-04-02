@@ -86,147 +86,79 @@ export const CustomLink = Link.extend<LinkOptions>({
       openLinkDialog:
         () =>
           ({ editor }) => {
-            // Get current link attributes if exists
-            let linkMark = editor.isActive('link')
-            let linkAttributes = editor.getAttributes('link')
-            let currentUrl = linkAttributes.href || ''
-            let currentOpenInNewTab = linkAttributes.target === '_blank'
-            
-            let selectedText = ''
-            
-            // Get the selected text or entire link text
+            // 获取当前选区
             const { from, to } = editor.state.selection
             
-            if (linkMark) {
-              // 如果光标在链接内，获取整个链接文本
-              const resolvedPos = editor.state.doc.resolve(from)
-              const marks = resolvedPos.marks()
-              const linkMarkObj = marks.find(mark => mark.type.name === 'link')
-              
-              if (linkMarkObj) {
-                // 查找链接的开始和结束位置
-                let linkStart = from
-                let linkEnd = to
-                
-                // 向前查找链接的开始
-                for (let i = from; i > 0; i--) {
-                  const pos = editor.state.doc.resolve(i)
-                  const marks = pos.marks()
-                  const hasLinkMark = marks.some(mark => mark.type.name === 'link' && mark.attrs.href === linkAttributes.href)
-                  
-                  if (!hasLinkMark) {
-                    linkStart = i + 1
-                    break
-                  }
-                  
-                  if (i === 1) {
-                    linkStart = 1
-                  }
-                }
-                
-                // 向后查找链接的结束
-                const docSize = editor.state.doc.content.size
-                for (let i = to; i <= docSize; i++) {
-                  if (i === docSize) {
-                    linkEnd = i
-                    break
-                  }
-                  
-                  const pos = editor.state.doc.resolve(i)
-                  const marks = pos.marks()
-                  const hasLinkMark = marks.some(mark => mark.type.name === 'link' && mark.attrs.href === linkAttributes.href)
-                  
-                  if (!hasLinkMark) {
-                    linkEnd = i
-                    break
-                  }
-                }
-                
-                // 获取整个链接文本
-                selectedText = editor.state.doc.textBetween(linkStart, linkEnd)
-                
-                // 选中整个链接文本
-                editor.chain().setTextSelection({ from: linkStart, to: linkEnd }).run()
-              }
-            } else {
-              // 检查光标是否在链接内（即使没有选中）
-              const resolvedPos = editor.state.doc.resolve(from)
-              const marks = resolvedPos.marks()
-              const linkMarkObj = marks.find(mark => mark.type.name === 'link')
-              
-              if (linkMarkObj) {
-                // 光标在链接内但没有选中，查找整个链接
-                let linkStart = from
-                let linkEnd = from
-                
-                // 向前查找链接的开始
-                for (let i = from; i > 0; i--) {
-                  const pos = editor.state.doc.resolve(i)
-                  const marks = pos.marks()
-                  const hasLinkMark = marks.some(mark => mark.type.name === 'link' && mark.attrs.href === linkMarkObj.attrs.href)
-                  
-                  if (!hasLinkMark) {
-                    linkStart = i + 1
-                    break
-                  }
-                  
-                  if (i === 1) {
-                    linkStart = 1
-                  }
-                }
-                
-                // 向后查找链接的结束
-                const docSize = editor.state.doc.content.size
-                for (let i = from; i <= docSize; i++) {
-                  if (i === docSize) {
-                    linkEnd = i
-                    break
-                  }
-                  
-                  const pos = editor.state.doc.resolve(i)
-                  const marks = pos.marks()
-                  const hasLinkMark = marks.some(mark => mark.type.name === 'link' && mark.attrs.href === linkMarkObj.attrs.href)
-                  
-                  if (!hasLinkMark) {
-                    linkEnd = i
-                    break
-                  }
-                }
-                
-                // 获取整个链接文本
-                selectedText = editor.state.doc.textBetween(linkStart, linkEnd)
-                
-                // 选中整个链接文本
-                editor.chain().setTextSelection({ from: linkStart, to: linkEnd }).run()
-                
-                // 更新链接状态
-                linkMark = true
-                linkAttributes = linkMarkObj.attrs
-                currentUrl = linkAttributes.href || ''
-                currentOpenInNewTab = linkAttributes.target === '_blank'
-              }
-            }
+            // 检查是否在链接内
+            const isInLink = editor.isActive('link')
+            const linkAttributes = editor.getAttributes('link')
+            const currentUrl = linkAttributes.href || ''
+            const currentOpenInNewTab = linkAttributes.target === '_blank'
             
-            // 如果没有获取到链接文本，使用普通的选中文本
-            if (!selectedText) {
-              selectedText = editor.state.doc.textBetween(from, to)
+            // 获取选中的文本
+            let selectedText = editor.state.doc.textBetween(from, to)
+            let linkStart = from
+            let linkEnd = to
+            
+            // 如果在链接内，获取整个链接文本
+            if (isInLink) {
+              // 查找链接的开始和结束位置
+              // 向前查找链接的开始
+              for (let i = from; i > 0; i--) {
+                const pos = editor.state.doc.resolve(i)
+                const marks = pos.marks()
+                const hasLinkMark = marks.some(mark => mark.type.name === 'link')
+                
+                if (!hasLinkMark) {
+                  linkStart = i
+                  break
+                }
+                
+                if (i === 1) {
+                  linkStart = 0
+                }
+              }
+              
+              // 向后查找链接的结束
+              const docSize = editor.state.doc.content.size
+              for (let i = to; i < docSize; i++) {
+                const pos = editor.state.doc.resolve(i)
+                const marks = pos.marks()
+                const hasLinkMark = marks.some(mark => mark.type.name === 'link')
+                
+                if (!hasLinkMark) {
+                  linkEnd = i
+                  break
+                }
+                
+                if (i === docSize - 1) {
+                  linkEnd = docSize - 1
+                }
+              }
+              
+              // 获取整个链接文本
+              selectedText = editor.state.doc.textBetween(linkStart, linkEnd - 1)
+              
+              // 选中整个链接文本
+              editor.chain().setTextSelection({ from: linkStart, to: linkEnd - 1 }).run()
             }
 
-            // Create Vue renderer
+            // 创建 Vue 渲染器
             const renderer = new VueRenderer(LinkDialog, {
               props: {
                 editor,
                 initialText: selectedText,
                 initialUrl: currentUrl,
                 initialOpenInNewTab: currentOpenInNewTab,
-                isEditingExistingLink: linkMark,
+                isEditingExistingLink: isInLink,
               },
               editor,
             })
 
-            // Create tippy instance
+            // 创建 tippy 实例
             const tippyInstance = tippy(document.body, {
               getReferenceClientRect: () => {
+                // 使用更新后的选区
                 const { from, to } = editor.state.selection
                 const start = editor.view.coordsAtPos(from)
                 const end = editor.view.coordsAtPos(to)
@@ -268,7 +200,7 @@ export const CustomLink = Link.extend<LinkOptions>({
                 return
               }
               
-              // 确保URL格式正确
+              // 确保 URL 格式正确
               let urlValue = attributes.href;
               if (!/^https?:\/\//i.test(urlValue) && !/^mailto:/i.test(urlValue)) {
                 urlValue = 'http://' + urlValue;
@@ -283,16 +215,19 @@ export const CustomLink = Link.extend<LinkOptions>({
               // 获取当前选区
               const { from, to } = editor.state.selection;
               
-              if (linkMark) {
+              if (isInLink) {
                 // 编辑现有链接
                 if (text && text !== selectedText) {
                   // 文本内容有变化，需要替换
+                  // 使用 insertContentAt 替换带有链接的文本
                   editor
                     .chain()
                     .focus()
-                    .deleteRange(editor.state.selection)
-                    .insertContent({ type: 'text', text })
-                    .setLink(updatedAttributes)
+                    .insertContentAt(editor.state.selection, {
+                      type: 'text',
+                      text,
+                      marks: [{ type: 'link', attrs: updatedAttributes }]
+                    })
                     .run()
                 } else {
                   // 只更新链接属性
@@ -307,9 +242,11 @@ export const CustomLink = Link.extend<LinkOptions>({
                     editor
                       .chain()
                       .focus()
-                      .deleteRange(editor.state.selection)
-                      .insertContent({ type: 'text', text })
-                      .setLink(updatedAttributes)
+                      .insertContentAt(editor.state.selection, {
+                        type: 'text',
+                        text,
+                        marks: [{ type: 'link', attrs: updatedAttributes }]
+                      })
                       .run()
                   } else {
                     // 不替换选中内容，只设置链接
@@ -317,21 +254,15 @@ export const CustomLink = Link.extend<LinkOptions>({
                   }
                 } else if (text) {
                   // 无选中文本但有填写文本，插入并设置链接
-                  // 先插入文本，然后选中插入的文本，最后设置链接
-                  const insertPos = editor.state.selection.from;
                   editor
                     .chain()
                     .focus()
-                    .insertContent({ type: 'text', text })
-                    .run();
-                  
-                  // 选中刚刚插入的文本
-                  editor
-                    .chain()
-                    .focus()
-                    .setTextSelection({ from: insertPos, to: insertPos + text.length })
-                    .setLink(updatedAttributes)
-                    .run();
+                    .insertContent({
+                      type: 'text',
+                      text,
+                      marks: [{ type: 'link', attrs: updatedAttributes }]
+                    })
+                    .run()
                 } else {
                   // 无选中文本也无填写文本，提示用户
                   console.warn('Cannot create link: no text provided')
@@ -354,7 +285,7 @@ export const CustomLink = Link.extend<LinkOptions>({
             document.addEventListener('confirm', handleConfirm)
             document.addEventListener('cancel', handleCancel)
 
-            // 在tippy销毁时清理事件监听器
+            // 在 tippy 销毁时清理事件监听器
             const cleanup = () => {
               document.removeEventListener('confirm', handleConfirm)
               document.removeEventListener('cancel', handleCancel)

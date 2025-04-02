@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, watch } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { Editor } from "@tiptap/core";
 
 const props = defineProps<{
@@ -57,29 +57,11 @@ const props = defineProps<{
   isEditingExistingLink?: boolean;
 }>();
 
+// 表单数据
 const text = ref(props.initialText || "");
 const url = ref(props.initialUrl || "");
 const openInNewTab = ref(props.initialOpenInNewTab || false);
 const isEditing = computed(() => props.isEditingExistingLink || false);
-
-// 监听属性变化，更新表单值
-watch(() => props.initialText, (newVal) => {
-  if (newVal) {
-    text.value = newVal;
-  }
-});
-
-watch(() => props.initialUrl, (newVal) => {
-  if (newVal) {
-    url.value = newVal;
-  }
-});
-
-watch(() => props.initialOpenInNewTab, (newVal) => {
-  if (newVal !== undefined) {
-    openInNewTab.value = newVal;
-  }
-});
 
 // 创建自定义事件
 const createCustomEvent = (name: string, detail?: any) => {
@@ -91,6 +73,7 @@ const createCustomEvent = (name: string, detail?: any) => {
   return event;
 };
 
+// 处理确认按钮点击
 const handleConfirm = () => {
   // 验证URL
   if (!url.value) {
@@ -131,20 +114,22 @@ const handleConfirm = () => {
   document.dispatchEvent(confirmEvent);
 };
 
+// 处理取消按钮点击
 const handleCancel = () => {
   // 创建并分发取消事件
   const cancelEvent = createCustomEvent('cancel');
   document.dispatchEvent(cancelEvent);
 };
 
-// 处理删除链接
+// 处理删除链接按钮点击
 const handleRemove = () => {
   props.editor.chain().focus().unsetLink().run();
   document.dispatchEvent(createCustomEvent('cancel'));
 };
 
+// 组件挂载时
 onMounted(() => {
-  // Focus the URL input on mount
+  // 聚焦到URL输入框
   const urlInput = document.getElementById("url") as HTMLInputElement;
   if (urlInput) {
     urlInput.focus();
@@ -183,7 +168,6 @@ $bg-hover: #e5e7eb;
     & > label {
       width: 60px;
       color: $text-color;
-      // font-weight: 500;
       font-size: 14px;
       text-align: right;
     }
