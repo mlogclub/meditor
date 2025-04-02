@@ -38,6 +38,7 @@
       </div>
     </div>
     <div class="dialog-actions">
+      <button v-if="isEditing" class="btn btn-remove" @click="handleRemove">删除链接</button>
       <button class="btn btn-cancel" @click="handleCancel">取消</button>
       <button class="btn btn-confirm" @click="handleConfirm">确定</button>
     </div>
@@ -45,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, computed, watch } from "vue";
 import { Editor } from "@tiptap/core";
 
 const props = defineProps<{
@@ -53,11 +54,32 @@ const props = defineProps<{
   initialText?: string;
   initialUrl?: string;
   initialOpenInNewTab?: boolean;
+  isEditingExistingLink?: boolean;
 }>();
 
 const text = ref(props.initialText || "");
 const url = ref(props.initialUrl || "");
 const openInNewTab = ref(props.initialOpenInNewTab || false);
+const isEditing = computed(() => props.isEditingExistingLink || false);
+
+// 监听属性变化，更新表单值
+watch(() => props.initialText, (newVal) => {
+  if (newVal) {
+    text.value = newVal;
+  }
+});
+
+watch(() => props.initialUrl, (newVal) => {
+  if (newVal) {
+    url.value = newVal;
+  }
+});
+
+watch(() => props.initialOpenInNewTab, (newVal) => {
+  if (newVal !== undefined) {
+    openInNewTab.value = newVal;
+  }
+});
 
 // 创建自定义事件
 const createCustomEvent = (name: string, detail?: any) => {
@@ -70,8 +92,32 @@ const createCustomEvent = (name: string, detail?: any) => {
 };
 
 const handleConfirm = () => {
+  // 验证URL
+  if (!url.value) {
+    // 如果是编辑模式且用户清空了URL，可以选择取消链接
+    if (isEditing.value) {
+      const removeEvent = createCustomEvent('confirm', { 
+        text: text.value,
+        attributes: { href: '' }, // 空链接，后续会处理为取消链接
+        remove: true
+      });
+      document.dispatchEvent(removeEvent);
+      return;
+    } else {
+      // 新链接必须有URL
+      alert('请输入链接地址');
+      return;
+    }
+  }
+
+  // 确保URL格式正确
+  let urlValue = url.value;
+  if (!/^https?:\/\//i.test(urlValue) && !/^mailto:/i.test(urlValue)) {
+    urlValue = 'http://' + urlValue;
+  }
+
   const attributes = {
-    href: url.value,
+    href: urlValue,
     ...(openInNewTab.value
       ? { target: "_blank", rel: "noopener noreferrer" }
       : {}),
@@ -91,11 +137,26 @@ const handleCancel = () => {
   document.dispatchEvent(cancelEvent);
 };
 
+// 处理删除链接
+const handleRemove = () => {
+  props.editor.chain().focus().unsetLink().run();
+  document.dispatchEvent(createCustomEvent('cancel'));
+};
+
 onMounted(() => {
   // Focus the URL input on mount
   const urlInput = document.getElementById("url") as HTMLInputElement;
   if (urlInput) {
     urlInput.focus();
+  }
+  
+  // 如果没有初始文本，尝试从编辑器中获取选中的文本
+  if (!props.initialText && props.editor) {
+    const { from, to } = props.editor.state.selection;
+    const selectedText = props.editor.state.doc.textBetween(from, to);
+    if (selectedText) {
+      text.value = selectedText;
+    }
   }
 });
 </script>
@@ -192,6 +253,17 @@ $bg-hover: #e5e7eb;
 
       &:hover {
         background: $primary-hover;
+      }
+    }
+    
+    &-remove {
+      margin-right: auto;
+      background: #ef4444;
+      border: none;
+      color: white;
+
+      &:hover {
+        background: #dc2626;
       }
     }
   }
