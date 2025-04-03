@@ -81,6 +81,14 @@ export const getSuggestionItems = () => [
         },
     },
     {
+        title: '链接',
+        description: '插入链接',
+        icon: LinkIcon,
+        command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
+            editor.chain().focus().deleteRange(range).openLinkDialog().run()
+        },
+    },
+    {
         title: '分割线',
         description: '插入水平分割线',
         icon: MinusSquare,
@@ -99,14 +107,6 @@ export const getSuggestionItems = () => [
                 .deleteRange(range)
                 .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
                 .run()
-        },
-    },
-    {
-        title: '链接',
-        description: '插入链接',
-        icon: LinkIcon,
-        command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
-            editor.commands.openLinkDialog()
         },
     },
 ]

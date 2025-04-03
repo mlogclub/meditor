@@ -20,7 +20,6 @@ const props = defineProps<{
 
 const handleSetLink = () => {
   if (!props.editor) return
-  // props.editor.commands.openLinkDialog()
   props.editor?.chain().focus().openLinkDialog()
 }
 </script> 
