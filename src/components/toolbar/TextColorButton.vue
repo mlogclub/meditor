@@ -133,7 +133,7 @@ const clearColor = () => {
 }
 
 .color-indicator {
-  margin-top: 2px;
+  margin-top: -2px;
   width: 24px;
   height: 3px;
   border-radius: 1px;
