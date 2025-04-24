@@ -2,11 +2,28 @@
   <div class="editor-container">
     <EditorToolbar :editor="editor" />
     <editor-content :editor="editor" class="editor-content" />
+    
+    <!-- 表格工具栏，使用bubble-menu在表格选中时显示 -->
+    <template v-if="editor">
+      <component
+        :is="BubbleMenu"
+        :editor="editor"
+        :tippy-options="{ 
+          placement: 'top-start', 
+          arrow: true,
+          duration: [300, 150],
+          theme: 'table-toolbar'
+        }"
+        :should-show="isTableActive"
+      >
+        <TableToolbar :editor="editor" />
+      </component>
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watch } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch, computed } from "vue";
 import { useEditor, EditorContent } from "@tiptap/vue-3";
 
 import StarterKit from "@tiptap/starter-kit";
@@ -14,7 +31,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
 import { CustomLink } from "../extensions/link";
-import Table from "@tiptap/extension-table";
+import { CustomTable, TableToolbar, isInTable } from "../extensions/table";
 import TableRow from "@tiptap/extension-table-row";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
@@ -68,7 +85,7 @@ const editor = useEditor({
         rel: "noopener noreferrer",
       },
     }),
-    Table.configure({
+    CustomTable.configure({
       resizable: true,
       HTMLAttributes: {
         class: "border-collapse table-fixed w-full",
@@ -88,7 +105,6 @@ const editor = useEditor({
       placeholder: "输入 / 插入内容",
     }),
     ImageUpload.configure({
-      // 使用自定义上传函数或默认的base64转换
       uploadFn:
         props.customImageUpload ||
         ((file: File) => {
@@ -98,18 +114,14 @@ const editor = useEditor({
             reader.readAsDataURL(file);
           });
         }),
-      // 配置最大文件大小
-      maxFileSize: props.maxImageSize || 5 * 1024 * 1024, // 默认5MB
-      // 配置接受的MIME类型
+      maxFileSize: props.maxImageSize || 5 * 1024 * 1024,
       acceptMimeTypes: props.acceptImageTypes || [
         "image/jpeg",
         "image/png",
         "image/gif",
         "image/webp",
       ],
-      // 开启拖放上传
       enableDragAndDrop: true,
-      // 错误处理
       onError: handleImageUploadError,
     }),
   ],
@@ -138,6 +150,11 @@ onMounted(() => {
 onBeforeUnmount(() => {
   editor.value?.destroy();
 });
+
+// 检查是否选中表格
+const isTableActive = (props: { editor: Editor }) => {
+  return isInTable(props.editor);
+};
 </script>
 
 <style lang="scss">
@@ -192,6 +209,108 @@ onBeforeUnmount(() => {
     /* 暗色主题的Placeholder样式 */
     .dark & p.is-editor-empty:first-child::before {
       color: #6b7280;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 1em 0;
+      overflow: hidden;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    td, th {
+      border: 1px solid #e5e7eb;
+      padding: 0.5rem;
+      text-align: left;
+      position: relative;
+      min-width: 1em;
+      
+      > * {
+        margin: 0;
+      }
+    }
+
+    th {
+      background-color: #f9fafb;
+      font-weight: bold;
+    }
+
+    .table-wrapper {
+      position: relative;
+      overflow-x: auto;
+      max-width: 100%;
+      margin: 1em 0;
+
+      &:hover .column-resize-handle {
+        opacity: 0.3;
+      }
+    }
+
+    .column-resize-handle {
+      position: absolute;
+      top: 0;
+      right: -2px;
+      width: 4px;
+      background-color: #3c84f4;
+      height: 100%;
+      opacity: 0;
+      cursor: col-resize;
+      transition: opacity 0.3s ease;
+      z-index: 10;
+
+      &:hover {
+        opacity: 1 !important;
+      }
+    }
+
+    /* 拖拽时添加的遮罩层样式 */
+    .resize-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      cursor: col-resize;
+      z-index: 100;
+    }
+  }
+
+  /* 暗色主题的表格样式 */
+  .dark .ProseMirror {
+    table {
+      border-color: #374151;
+    }
+
+    td, th {
+      border-color: #4b5563;
+    }
+
+    th {
+      background-color: #1f2937;
+    }
+
+    .column-resize-handle {
+      background-color: #60a5fa;
+    }
+  }
+
+  /* 表格工具栏弹出样式 */
+  .tippy-box[data-theme~='table-toolbar'] {
+    background-color: transparent;
+    box-shadow: none;
+    
+    .tippy-content {
+      padding: 0;
+    }
+    
+    .tippy-arrow {
+      color: white;
+    }
+
+    /* 暗色主题样式 */
+    .dark & .tippy-arrow {
+      color: #1f2937;
     }
   }
 
