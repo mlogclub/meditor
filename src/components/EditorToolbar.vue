@@ -23,7 +23,6 @@
     <ToolbarDivider />
     <TextColorButton :editor="editor" />
     <BackgroundColorButton :editor="editor" />
-    <ToolbarDivider />
   </div>
 </template>
 

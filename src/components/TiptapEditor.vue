@@ -220,7 +220,7 @@ onBeforeUnmount(() => {
   img {
     max-width: 100%;
     height: auto;
-    border-radius: 6px;
+    // border-radius: 6px;
     margin: 1em 0;
   }
 
