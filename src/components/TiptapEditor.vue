@@ -26,6 +26,7 @@ import { Image } from "../extensions/image";
 import { SlashSuggestion } from "../extensions/slash";
 import EditorToolbar from "./EditorToolbar.vue";
 import { ImageUpload } from "../extensions/image-upload";
+import Placeholder from "@tiptap/extension-placeholder";
 
 import "tippy.js/dist/tippy.css";
 import "../styles/scrollbar.css";
@@ -83,6 +84,9 @@ const editor = useEditor({
       multicolor: true,
     }),
     Image,
+    Placeholder.configure({
+      placeholder: "输入 / 插入内容",
+    }),
     ImageUpload.configure({
       // 使用自定义上传函数或默认的base64转换
       uploadFn:
@@ -175,6 +179,20 @@ onBeforeUnmount(() => {
     flex: 1;
     outline: none;
     padding: 1rem;
+    
+    /* Placeholder样式 */
+    p.is-editor-empty:first-child::before {
+      color: #adb5bd;
+      content: attr(data-placeholder);
+      float: left;
+      height: 0;
+      pointer-events: none;
+    }
+
+    /* 暗色主题的Placeholder样式 */
+    .dark & p.is-editor-empty:first-child::before {
+      color: #6b7280;
+    }
   }
 
   /* 调整可调整大小图片样式 */
