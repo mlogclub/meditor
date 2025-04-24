@@ -1,8 +1,11 @@
 import { Table as TiptapTable } from '@tiptap/extension-table'
-import { Editor } from '@tiptap/core'
-import { Node as ProseMirrorNode } from '@tiptap/pm/model'
 import { Plugin, PluginKey } from '@tiptap/pm/state'
 import { Decoration, DecorationSet } from '@tiptap/pm/view'
+import { VueRenderer } from '@tiptap/vue-3'
+import TableToolbar from './TableToolbar.vue'
+import tippy, { Instance as TippyInstance } from 'tippy.js'
+import 'tippy.js/dist/tippy.css'
+import { isInTable } from './TableCommands'
 
 export interface TableOptions {
   /**
@@ -28,6 +31,32 @@ export interface TableOptions {
 }
 
 export const TablePluginKey = new PluginKey('custom-table')
+export const TableToolbarPluginKey = new PluginKey('tableToolbar')
+
+// 辅助方法：显示表格工具栏
+function showBubbleMenu(editorView: any, tippyInstance: TippyInstance) {
+  tippyInstance.setProps({
+    getReferenceClientRect: () => {
+      const { from } = editorView.state.selection
+      const start = editorView.coordsAtPos(from)
+      return new DOMRect(
+        start.left,
+        start.top,
+        0,
+        0
+      )
+    },
+  })
+  
+  tippyInstance.show()
+}
+
+// 辅助方法：隐藏表格工具栏
+function hideBubbleMenu(tippyInstance: TippyInstance | null) {
+  if (tippyInstance) {
+    tippyInstance.hide()
+  }
+}
 
 export const CustomTable = TiptapTable.extend<TableOptions>({
   name: 'table',
@@ -70,25 +99,113 @@ export const CustomTable = TiptapTable.extend<TableOptions>({
 
   addProseMirrorPlugins() {
     const plugins = []
+    const { enableTableToolbar } = this.options
+    const editor = this.editor
 
-    if (this.options.enableTableToolbar) {
-      // 添加表格工具栏插件
+    // 添加表格浮动工具栏
+    if (enableTableToolbar) {
       plugins.push(
         new Plugin({
-          key: TablePluginKey,
-          props: {
-            decorations: (state) => {
-              // 查找表格
-              const { doc, selection } = state
-              const decorations: Decoration[] = []
-              const decorationSet = DecorationSet.create(doc, decorations)
+          key: TableToolbarPluginKey,
+          view: () => {
+            let view: HTMLElement | null = null
+            let tippyInstance: TippyInstance | null = null
+            let renderer: VueRenderer | null = null
+            
+            return {
+              update: (editorView, prevState) => {
+                const { state, composing } = editorView
+                const { doc, selection } = state
+                
+                // 不在输入时更新工具栏
+                if (composing) {
+                  return
+                }
+                
+                // 检查是否在表格内
+                const isTableActive = isInTable(editor)
+                
+                // 如果不在表格内，隐藏工具栏
+                if (!isTableActive) {
+                  hideBubbleMenu(tippyInstance)
+                  return
+                }
+                
+                // 如果已经有工具栏，更新位置
+                if (tippyInstance && view) {
+                  showBubbleMenu(editorView, tippyInstance)
+                  return
+                }
+                
+                // 如果不存在工具栏实例，创建一个
+                if (!tippyInstance) {
+                  renderer = new VueRenderer(TableToolbar, {
+                    props: {
+                      editor
+                    },
+                    editor
+                  })
+                  
+                  view = renderer.element as HTMLElement
+                  
+                  // 创建tippy实例
+                  tippyInstance = tippy(document.body, {
+                    getReferenceClientRect: () => {
+                      const { from } = editorView.state.selection
+                      const start = editorView.coordsAtPos(from)
+                      return new DOMRect(
+                        start.left,
+                        start.top,
+                        0,
+                        0
+                      )
+                    },
+                    content: view,
+                    showOnCreate: true,
+                    interactive: true,
+                    trigger: 'manual',
+                    placement: 'top-start',
+                    theme: 'light',
+                    arrow: true,
+                    animation: 'scale',
+                  })
+                }
+                
+                // 显示工具栏
+                showBubbleMenu(editorView, tippyInstance)
+              },
               
-              return decorationSet
+              destroy: () => {
+                if (tippyInstance) {
+                  tippyInstance.destroy()
+                }
+                
+                if (renderer) {
+                  renderer.destroy()
+                }
+              }
             }
-          }
+          },
         })
       )
     }
+
+    // 基本的表格插件
+    plugins.push(
+      new Plugin({
+        key: TablePluginKey,
+        props: {
+          decorations: (state) => {
+            // 查找表格
+            const { doc, selection } = state
+            const decorations: Decoration[] = []
+            const decorationSet = DecorationSet.create(doc, decorations)
+            
+            return decorationSet
+          }
+        }
+      })
+    )
 
     return [...this.parent?.() || [], ...plugins]
   }

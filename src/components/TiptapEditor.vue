@@ -2,23 +2,6 @@
   <div class="editor-container">
     <EditorToolbar :editor="editor" />
     <editor-content :editor="editor" class="editor-content" />
-    
-    <!-- 表格工具栏，使用bubble-menu在表格选中时显示 -->
-    <template v-if="editor">
-      <component
-        :is="BubbleMenu"
-        :editor="editor"
-        :tippy-options="{ 
-          placement: 'top-start', 
-          arrow: true,
-          duration: [300, 150],
-          theme: 'table-toolbar'
-        }"
-        :should-show="isTableActive"
-      >
-        <TableToolbar :editor="editor" />
-      </component>
-    </template>
   </div>
 </template>
 
@@ -31,7 +14,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
 import { CustomLink } from "../extensions/link";
-import { CustomTable, TableToolbar, isInTable } from "../extensions/table";
+import { CustomTable } from "../extensions/table";
 import TableRow from "@tiptap/extension-table-row";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
@@ -87,6 +70,7 @@ const editor = useEditor({
     }),
     CustomTable.configure({
       resizable: true,
+      enableTableToolbar: true,
       HTMLAttributes: {
         class: "border-collapse table-fixed w-full",
       },
@@ -150,11 +134,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   editor.value?.destroy();
 });
-
-// 检查是否选中表格
-const isTableActive = (props: { editor: Editor }) => {
-  return isInTable(props.editor);
-};
 </script>
 
 <style lang="scss">
@@ -292,25 +271,6 @@ const isTableActive = (props: { editor: Editor }) => {
 
     .column-resize-handle {
       background-color: #60a5fa;
-    }
-  }
-
-  /* 表格工具栏弹出样式 */
-  .tippy-box[data-theme~='table-toolbar'] {
-    background-color: transparent;
-    box-shadow: none;
-    
-    .tippy-content {
-      padding: 0;
-    }
-    
-    .tippy-arrow {
-      color: white;
-    }
-
-    /* 暗色主题样式 */
-    .dark & .tippy-arrow {
-      color: #1f2937;
     }
   }
 
