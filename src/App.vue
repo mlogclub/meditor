@@ -14,6 +14,7 @@ const content = ref(`
 <template>
   <div class="app">
     <TiptapEditor v-model="content" />
+    <div v-text="content"></div>
   </div>
 </template>
 

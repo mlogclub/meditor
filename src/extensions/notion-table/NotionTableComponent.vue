@@ -31,7 +31,10 @@
                   class="table-header"
                   :style="{ width: col.width + 'px' }">
                 <div class="header-content">
-                  <div class="header-text" contenteditable="true" @input="updateColumnTitle(index, $event)">
+                  <div class="header-text" 
+                       contenteditable="true" 
+                       @input="updateColumnTitle(index, $event)"
+                       @blur="onBlur">
                     {{ col.title }}
                   </div>
                   <!-- 列操作按钮 -->
@@ -52,7 +55,12 @@
               <td v-for="(col, colIndex) in columns" 
                   :key="col.id"
                   class="table-cell">
-                <div class="cell-content" contenteditable="true" @input="updateCell(rowIndex, col.id, $event)">
+                <div class="cell-content" 
+                     contenteditable="true" 
+                     :data-row-index="rowIndex"
+                     :data-col-id="col.id"
+                     @input="updateCell($event)"
+                     @blur="onBlur">
                   {{ row[col.id] }}
                 </div>
               </td>
@@ -348,18 +356,70 @@ const insertRow = (index: number) => {
   })
 }
 
-const updateColumnTitle = (index: number, event: Event) => {
-  const target = event.target as HTMLElement
-  const newColumns = [...columns.value]
-  newColumns[index].title = target.innerText
-  props.updateAttributes({ columns: newColumns })
-}
+// 添加新的状态来跟踪编辑状态
+const isEditing = ref(false)
 
-const updateCell = (rowIndex: number, colId: string, event: Event) => {
+// 修改 updateCell 函数
+const updateCell = (event: Event) => {
+  if (isEditing.value) return
+  
   const target = event.target as HTMLElement
+  const rowIndex = parseInt(target.dataset.rowIndex || '0')
+  const colId = target.dataset.colId || ''
+  
+  // 标记正在编辑
+  isEditing.value = true
+  
+  // 获取当前光标位置
+  const selection = window.getSelection()
+  const range = selection?.getRangeAt(0)
+  
+  // 更新数据
   const newRows = [...rows.value]
   newRows[rowIndex][colId] = target.innerText
   props.updateAttributes({ rows: newRows })
+  
+  // 在下一个微任务中恢复光标位置
+  queueMicrotask(() => {
+    if (range && selection) {
+      selection.removeAllRanges()
+      selection.addRange(range)
+    }
+    isEditing.value = false
+  })
+}
+
+// 修改 updateColumnTitle 函数
+const updateColumnTitle = (index: number, event: Event) => {
+  if (isEditing.value) return
+  
+  const target = event.target as HTMLElement
+  
+  // 标记正在编辑
+  isEditing.value = true
+  
+  // 获取当前光标位置
+  const selection = window.getSelection()
+  const range = selection?.getRangeAt(0)
+  
+  // 更新数据
+  const newColumns = [...columns.value]
+  newColumns[index].title = target.innerText
+  props.updateAttributes({ columns: newColumns })
+  
+  // 在下一个微任务中恢复光标位置
+  queueMicrotask(() => {
+    if (range && selection) {
+      selection.removeAllRanges()
+      selection.addRange(range)
+    }
+    isEditing.value = false
+  })
+}
+
+// 添加 blur 处理函数
+const onBlur = () => {
+  isEditing.value = false
 }
 
 const deleteTable = () => {
