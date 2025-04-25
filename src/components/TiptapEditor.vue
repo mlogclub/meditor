@@ -23,6 +23,7 @@ import { BubbleMenu } from "@tiptap/extension-bubble-menu";
 import { FloatingMenu } from "@tiptap/extension-floating-menu";
 import { Image } from "../extensions/image";
 import { SlashSuggestion } from "../extensions/slash";
+import { NotionTable } from "../extensions/notion-table";
 import EditorToolbar from "./EditorToolbar.vue";
 import { ImageUpload } from "../extensions/image-upload";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -70,6 +71,7 @@ const editor = useEditor({
     TableRow,
     TableHeader,
     TableCell,
+    NotionTable,
     SlashSuggestion,
     BubbleMenu,
     FloatingMenu,
