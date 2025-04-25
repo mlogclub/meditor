@@ -96,29 +96,16 @@ export const getSuggestionItems = () => [
             editor.chain().focus().deleteRange(range).setHorizontalRule().run()
         },
     },
-    // {
-    //     title: '表格',
-    //     description: '插入表格',
-    //     icon: TableIcon,
-    //     command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
-    //         editor
-    //             .chain()
-    //             .focus()
-    //             .deleteRange(range)
-    //             .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-    //             .run()
-    //     },
-    // },
     {
-        title: 'Notion表格',
-        description: '插入Notion风格的表格',
+        title: '表格',
+        description: '插入表格',
         icon: TableIcon,
         command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
             editor
                 .chain()
                 .focus()
                 .deleteRange(range)
-                .insertNotionTable()
+                .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
                 .run()
         },
     },

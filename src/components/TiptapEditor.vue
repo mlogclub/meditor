@@ -14,6 +14,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
 import { CustomLink } from "../extensions/link";
+import Table from "@tiptap/extension-table";
 import TableRow from "@tiptap/extension-table-row";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
@@ -23,7 +24,6 @@ import { BubbleMenu } from "@tiptap/extension-bubble-menu";
 import { FloatingMenu } from "@tiptap/extension-floating-menu";
 import { Image } from "../extensions/image";
 import { SlashSuggestion } from "../extensions/slash";
-import { NotionTable } from "../extensions/notion-table";
 import EditorToolbar from "./EditorToolbar.vue";
 import { ImageUpload } from "../extensions/image-upload";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -68,10 +68,10 @@ const editor = useEditor({
         rel: "noopener noreferrer",
       },
     }),
+    Table,
     TableRow,
     TableHeader,
     TableCell,
-    NotionTable,
     SlashSuggestion,
     BubbleMenu,
     FloatingMenu,
