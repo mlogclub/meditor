@@ -34,6 +34,10 @@
                   <div class="header-text" contenteditable="true" @input="updateColumnTitle(index, $event)">
                     {{ col.title }}
                   </div>
+                  <!-- 列操作按钮 -->
+                  <button class="column-menu-trigger" @click.stop="openColumnMenu($event, index)">
+                    <MoreHorizontalIcon class="icon" :size="14" />
+                  </button>
                 </div>
                 <div class="resize-handle" 
                      @mousedown.prevent="startResize($event, index)"></div>
@@ -52,9 +56,10 @@
                   {{ row[col.id] }}
                 </div>
               </td>
+              <!-- 行操作按钮 -->
               <td class="row-actions">
-                <button class="delete-row" @click="deleteRow(rowIndex)">
-                  <XIcon class="icon" :size="14" />
+                <button class="row-menu-trigger" @click.stop="openRowMenu($event, rowIndex)">
+                  <MoreVerticalIcon class="icon" :size="14" />
                 </button>
               </td>
             </tr>
@@ -68,7 +73,9 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { NodeViewWrapper } from '@tiptap/vue-3'
-import { PlusIcon, Trash2Icon, XIcon } from 'lucide-vue-next'
+import { PlusIcon, Trash2Icon, XIcon, MoreHorizontalIcon, MoreVerticalIcon, ChevronRightIcon } from 'lucide-vue-next'
+import tippy from 'tippy.js'
+import 'tippy.js/dist/tippy.css'
 
 interface Column {
   id: string
@@ -120,6 +127,134 @@ const stopResize = () => {
   isResizing = false
   document.removeEventListener('mousemove', handleResize)
   document.removeEventListener('mouseup', stopResize)
+}
+
+// 列操作相关
+const createColumnMenuContent = (columnIndex: number) => {
+  const div = document.createElement('div')
+  div.className = 'notion-table-menu'
+  
+  const menuItems = [
+    {
+      label: '在左侧插入列',
+      icon: ChevronRightIcon,
+      action: () => insertColumn(columnIndex)
+    },
+    {
+      label: '在右侧插入列',
+      icon: ChevronRightIcon,
+      action: () => insertColumn(columnIndex + 1)
+    },
+    {
+      label: '删除列',
+      icon: ChevronRightIcon,
+      action: () => deleteColumn(columnIndex)
+    }
+  ]
+
+  menuItems.forEach(item => {
+    const button = document.createElement('button')
+    button.className = 'menu-item'
+    button.innerHTML = `
+      <span class="menu-item-icon">${item.icon}</span>
+      <span class="menu-item-label">${item.label}</span>
+    `
+    button.addEventListener('click', () => {
+      item.action()
+      // 关闭菜单
+      const tippyInstance = (button.closest('.notion-table-menu') as any)?._tippy
+      if (tippyInstance) {
+        tippyInstance.hide()
+      }
+    })
+    div.appendChild(button)
+  })
+
+  return div
+}
+
+const openColumnMenu = (event: MouseEvent, columnIndex: number) => {
+  const target = event.currentTarget as HTMLElement
+  
+  tippy(target, {
+    content: createColumnMenuContent(columnIndex),
+    trigger: 'click',
+    placement: 'bottom',
+    interactive: true,
+    arrow: true,
+    theme: 'notion',
+    onMount(instance) {
+      // 给菜单容器添加引用以便关闭
+      const content = instance.popper.querySelector('.notion-table-menu')
+      if (content) {
+        ;(content as any)._tippy = instance
+      }
+    }
+  }).show()
+}
+
+// 行操作相关
+const createRowMenuContent = (rowIndex: number) => {
+  const div = document.createElement('div')
+  div.className = 'notion-table-menu'
+  
+  const menuItems = [
+    {
+      label: '在上方插入行',
+      icon: ChevronRightIcon,
+      action: () => insertRow(rowIndex)
+    },
+    {
+      label: '在下方插入行',
+      icon: ChevronRightIcon,
+      action: () => insertRow(rowIndex + 1)
+    },
+    {
+      label: '删除行',
+      icon: ChevronRightIcon,
+      action: () => deleteRow(rowIndex)
+    }
+  ]
+
+  menuItems.forEach(item => {
+    const button = document.createElement('button')
+    button.className = 'menu-item'
+    button.innerHTML = `
+      <span class="menu-item-icon">${item.icon}</span>
+      <span class="menu-item-label">${item.label}</span>
+    `
+    button.addEventListener('click', () => {
+      item.action()
+      // 关闭菜单
+      const tippyInstance = (button.closest('.notion-table-menu') as any)?._tippy
+      if (tippyInstance) {
+        tippyInstance.hide()
+      }
+    })
+    div.appendChild(button)
+  })
+
+  return div
+}
+
+const openRowMenu = (event: MouseEvent, rowIndex: number) => {
+  const target = event.currentTarget as HTMLElement
+  
+  tippy(target, {
+    content: createRowMenuContent(rowIndex),
+    trigger: 'click',
+    placement: 'right',
+    interactive: true,
+    arrow: true,
+    theme: 'notion',
+    onMount(instance) {
+      // 给菜单容器添加引用以便关闭
+      const content = instance.popper.querySelector('.notion-table-menu')
+      if (content) {
+        ;(content as any)._tippy = instance
+      }
+    }
+  }).show()
 }
 
 // 表格操作
@@ -174,6 +309,43 @@ const deleteColumn = (index: number) => {
 const deleteRow = (index: number) => {
   const newRows = rows.value.filter((_, i) => i !== index)
   props.updateAttributes({ rows: newRows })
+}
+
+const insertColumn = (index: number) => {
+  const newId = `col${Date.now()}`
+  const newColumns = [...columns.value]
+  newColumns.splice(index, 0, {
+    id: newId,
+    title: `列 ${columns.value.length + 1}`,
+    width: 200
+  })
+  
+  const newRows = rows.value.map(row => {
+    const newRow = { ...row }
+    newRow[newId] = ''
+    return newRow
+  })
+  
+  props.updateAttributes({ 
+    columns: newColumns,
+    rows: newRows
+  })
+}
+
+const insertRow = (index: number) => {
+  const newRow: Row = {
+    id: `row${Date.now()}`
+  }
+  columns.value.forEach(col => {
+    newRow[col.id] = ''
+  })
+  
+  const newRows = [...rows.value]
+  newRows.splice(index, 0, newRow)
+  
+  props.updateAttributes({
+    rows: newRows
+  })
 }
 
 const updateColumnTitle = (index: number, event: Event) => {
@@ -264,6 +436,7 @@ table {
 .header-content {
   display: flex;
   align-items: center;
+  gap: 4px;
 }
 
 .header-text {
@@ -274,6 +447,27 @@ table {
   &:focus {
     background: #f3f4f6;
     border-radius: 2px;
+  }
+}
+
+.column-menu-trigger {
+  opacity: 0;
+  padding: 2px;
+  border: none;
+  background: white;
+  border-radius: 2px;
+  cursor: pointer;
+  
+  .table-header:hover & {
+    opacity: 1;
+  }
+  
+  &:hover {
+    background: #f3f4f6;
+  }
+  
+  .icon {
+    color: #6b7280;
   }
 }
 
@@ -333,7 +527,7 @@ table {
   vertical-align: middle;
 }
 
-.delete-row {
+.row-menu-trigger {
   opacity: 0;
   padding: 2px;
   border: none;
@@ -350,7 +544,65 @@ table {
   }
   
   .icon {
-    color: #ef4444;
+    color: #6b7280;
+  }
+}
+</style>
+
+<style lang="scss">
+// Tippy 主题
+.tippy-box[data-theme~='notion'] {
+  background-color: white;
+  color: #111827;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  
+  .tippy-arrow {
+    color: white;
+  }
+  
+  &[data-placement^='top'] > .tippy-arrow::before {
+    border-top-color: white;
+  }
+  
+  &[data-placement^='bottom'] > .tippy-arrow::before {
+    border-bottom-color: white;
+  }
+  
+  &[data-placement^='left'] > .tippy-arrow::before {
+    border-left-color: white;
+  }
+  
+  &[data-placement^='right'] > .tippy-arrow::before {
+    border-right-color: white;
+  }
+}
+
+.notion-table-menu {
+  min-width: 180px;
+  padding: 4px;
+  
+  .menu-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 6px 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #374151;
+    border-radius: 4px;
+    
+    &:hover {
+      background: #f3f4f6;
+    }
+    
+    .menu-item-icon {
+      margin-right: 8px;
+      color: #6b7280;
+    }
   }
 }
 </style> 
