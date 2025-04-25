@@ -14,7 +14,6 @@ import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
 import { CustomLink } from "../extensions/link";
-import { CustomTable } from "../extensions/table";
 import TableRow from "@tiptap/extension-table-row";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
@@ -66,13 +65,6 @@ const editor = useEditor({
       openOnClick: false,
       HTMLAttributes: {
         rel: "noopener noreferrer",
-      },
-    }),
-    CustomTable.configure({
-      resizable: true,
-      enableTableToolbar: true,
-      HTMLAttributes: {
-        class: "border-collapse table-fixed w-full",
       },
     }),
     TableRow,
@@ -175,7 +167,7 @@ onBeforeUnmount(() => {
     flex: 1;
     outline: none;
     padding: 1rem;
-    
+
     /* Placeholder样式 */
     p.is-editor-empty:first-child::before {
       color: #adb5bd;
@@ -184,93 +176,13 @@ onBeforeUnmount(() => {
       height: 0;
       pointer-events: none;
     }
-
-    /* 暗色主题的Placeholder样式 */
-    .dark & p.is-editor-empty:first-child::before {
-      color: #6b7280;
-    }
-
-    table {
-      border-collapse: collapse;
-      margin: 1em 0;
-      overflow: hidden;
-      width: 100%;
-      table-layout: fixed;
-    }
-
-    td, th {
-      border: 1px solid #e5e7eb;
-      padding: 0.5rem;
-      text-align: left;
-      position: relative;
-      min-width: 1em;
-      
-      > * {
-        margin: 0;
-      }
-    }
-
-    th {
-      background-color: #f9fafb;
-      font-weight: bold;
-    }
-
-    .table-wrapper {
-      position: relative;
-      overflow-x: auto;
-      max-width: 100%;
-      margin: 1em 0;
-
-      &:hover .column-resize-handle {
-        opacity: 0.3;
-      }
-    }
-
-    .column-resize-handle {
-      position: absolute;
-      top: 0;
-      right: -2px;
-      width: 4px;
-      background-color: #3c84f4;
-      height: 100%;
-      opacity: 0;
-      cursor: col-resize;
-      transition: opacity 0.3s ease;
-      z-index: 10;
-
-      &:hover {
-        opacity: 1 !important;
-      }
-    }
-
-    /* 拖拽时添加的遮罩层样式 */
-    .resize-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      cursor: col-resize;
-      z-index: 100;
-    }
   }
 
   /* 暗色主题的表格样式 */
   .dark .ProseMirror {
-    table {
-      border-color: #374151;
-    }
-
-    td, th {
-      border-color: #4b5563;
-    }
-
-    th {
-      background-color: #1f2937;
-    }
-
-    .column-resize-handle {
-      background-color: #60a5fa;
+    /* 暗色主题的Placeholder样式 */
+    p.is-editor-empty:first-child::before {
+      color: #6b7280;
     }
   }
 

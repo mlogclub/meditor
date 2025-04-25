@@ -13,7 +13,6 @@ const content = ref(`
 
 <template>
   <div class="app">
-    <h1>富文本编辑器</h1>
     <TiptapEditor v-model="content" />
   </div>
 </template>
