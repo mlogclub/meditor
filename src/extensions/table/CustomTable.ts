@@ -6,6 +6,7 @@ import TableToolbar from './TableToolbar.vue'
 import tippy, { Instance as TippyInstance } from 'tippy.js'
 import 'tippy.js/dist/tippy.css'
 import { isInTable } from './TableCommands'
+import { EnhancedTableView } from './EnhancedTableView'
 
 export interface TableOptions {
   /**
@@ -208,5 +209,17 @@ export const CustomTable = TiptapTable.extend<TableOptions>({
     )
 
     return [...this.parent?.() || [], ...plugins]
+  },
+
+  addNodeView() {
+    return ({ editor, node, getPos }) => {
+      return new EnhancedTableView({
+        editor,
+        node,
+        getPos,
+        cellMinWidth: this.options.cellMinWidth,
+        minWidth: this.options.minWidth,
+      })
+    }
   }
 }) 
