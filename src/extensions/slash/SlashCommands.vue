@@ -12,12 +12,14 @@
     >
       <component :is="item.icon" class="item-icon" :size="18" />
       <div class="item-content">
-        <div class="item-title">{{ item.title }}</div>
-        <div class="item-description">
-          {{ item.description }}
+        <div class="item-title">
+          {{ item.title }}
           <span v-if="item.aliases && item.aliases.length > 0" class="item-aliases">
             /{{ item.aliases[0] }}
           </span>
+        </div>
+        <div class="item-description">
+          {{ item.description }}
         </div>
       </div>
     </button>
@@ -200,7 +202,6 @@ defineExpose({
   color: #6b7280;
   margin-bottom: 0.5rem;
   padding: 0 0.5rem;
-  font-style: italic;
 }
 
 .slash-item {
@@ -221,7 +222,8 @@ defineExpose({
   }
 
   &.is-selected {
-    background-color: #e5e7eb;
+    // background-color: #e5e7eb;
+    background-color: #f3f4f6;
   }
 
   .item-icon {
@@ -237,17 +239,20 @@ defineExpose({
     font-size: 14px;
     // font-weight: 500;
     color: #111827;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .item-aliases {
+      font-size: 12px;
+      // opacity: 0.8;
+      color: #6b7280;
+    }
   }
 
   .item-description {
     font-size: 12px;
     color: #6b7280;
-    
-    .item-aliases {
-      font-style: italic;
-      opacity: 0.8;
-      margin-left: 4px;
-    }
   }
 }
 
