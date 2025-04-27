@@ -119,7 +119,7 @@ defineExpose({
 })
 </script>
 
-<style>
+<style lang="scss">
 .slash-commands {
   background: white;
   border-radius: 6px;
@@ -130,11 +130,11 @@ defineExpose({
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #c1c1c1 #f1f1f1;
-}
 
-/* 暗色主题滚动条 */
-.dark .slash-commands {
-  scrollbar-color: #4a4a4a #2d2d2d;
+  /* 暗色主题滚动条 */
+  .dark & {
+    scrollbar-color: #4a4a4a #2d2d2d;
+  }
 }
 
 .slash-item {
@@ -149,58 +149,63 @@ defineExpose({
   cursor: pointer;
   text-align: left;
   transition: background-color 0.2s ease;
-}
 
-.slash-item:hover {
-  background-color: #f3f4f6;
-}
+  &:hover {
+    background-color: #f3f4f6;
+  }
 
-.slash-item.is-selected {
-  background-color: #e5e7eb;
-}
+  &.is-selected {
+    background-color: #e5e7eb;
+  }
 
-.item-icon {
-  margin-right: 0.75rem;
-  color: #6b7280;
-}
+  .item-icon {
+    margin-right: 0.75rem;
+    color: #6b7280;
+  }
 
-.item-content {
-  flex: 1;
-}
+  .item-content {
+    flex: 1;
+  }
 
-.item-title {
-  font-weight: 500;
-  color: #111827;
-}
+  .item-title {
+    font-size: 14px;
+    // font-weight: 500;
+    color: #111827;
+  }
 
-.item-description {
-  font-size: 0.875rem;
-  color: #6b7280;
+  .item-description {
+    font-size: 12px;
+    color: #6b7280;
+  }
 }
 
 /* 暗色主题样式 */
-.dark .slash-commands {
-  background: #1f2937;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0px 10px 20px rgba(0, 0, 0, 0.2);
-}
+.dark {
+  .slash-commands {
+    background: #1f2937;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0px 10px 20px rgba(0, 0, 0, 0.2);
+  }
 
-.dark .slash-item:hover {
-  background-color: #374151;
-}
+  .slash-item {
+    &:hover {
+      background-color: #374151;
+    }
 
-.dark .slash-item.is-selected {
-  background-color: #4b5563;
-}
+    &.is-selected {
+      background-color: #4b5563;
+    }
 
-.dark .item-icon {
-  color: #9ca3af;
-}
+    .item-icon {
+      color: #9ca3af;
+    }
 
-.dark .item-title {
-  color: #f9fafb;
-}
+    .item-title {
+      color: #f9fafb;
+    }
 
-.dark .item-description {
-  color: #9ca3af;
+    .item-description {
+      color: #9ca3af;
+    }
+  }
 }
 </style> 
