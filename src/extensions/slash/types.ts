@@ -17,6 +17,7 @@ export interface CommandItem {
     title: string
     description: string
     icon: Component
+    aliases?: string[]
     command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => void
 }
 
@@ -25,6 +26,7 @@ export const getSuggestionItems = () => [
         title: '标题1',
         description: '大标题',
         icon: Heading1,
+        aliases: ['h1', '一级标题', 'heading1'],
         command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
             editor.chain().focus().deleteRange(range).setNode('heading', { level: 1 }).run()
         },
@@ -33,6 +35,7 @@ export const getSuggestionItems = () => [
         title: '标题2',
         description: '二级标题',
         icon: Heading2,
+        aliases: ['h2', '二级标题', 'heading2'],
         command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
             editor.chain().focus().deleteRange(range).setNode('heading', { level: 2 }).run()
         },
@@ -41,6 +44,7 @@ export const getSuggestionItems = () => [
         title: '无序列表',
         description: '创建无序列表',
         icon: List,
+        aliases: ['ul', 'bullet', 'list'],
         command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
             editor.chain().focus().deleteRange(range).toggleBulletList().run()
         },
@@ -49,6 +53,7 @@ export const getSuggestionItems = () => [
         title: '有序列表',
         description: '创建有序列表',
         icon: ListOrdered,
+        aliases: ['ol', 'ordered', 'numbered'],
         command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
             editor.chain().focus().deleteRange(range).toggleOrderedList().run()
         },
@@ -57,6 +62,7 @@ export const getSuggestionItems = () => [
         title: '引用',
         description: '插入引用文本',
         icon: Quote,
+        aliases: ['quote', 'blockquote', '引用文本'],
         command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
             editor.chain().focus().deleteRange(range).toggleBlockquote().run()
         },
@@ -65,6 +71,7 @@ export const getSuggestionItems = () => [
         title: '代码块',
         description: '插入代码块',
         icon: Code2,
+        aliases: ['code', 'codeblock', '代码'],
         command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
             editor.chain().focus().deleteRange(range).toggleCodeBlock().run()
         },
@@ -73,6 +80,7 @@ export const getSuggestionItems = () => [
         title: '图片',
         description: '插入图片',
         icon: ImageIcon,
+        aliases: ['img', 'image', 'picture'],
         command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
             const url = window.prompt('输入图片URL')
             if (url) {
@@ -84,6 +92,7 @@ export const getSuggestionItems = () => [
         title: '链接',
         description: '插入链接',
         icon: LinkIcon,
+        aliases: ['link', 'url', 'href'],
         command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
             editor.chain().focus().deleteRange(range).openLinkDialog().run()
         },
@@ -92,6 +101,7 @@ export const getSuggestionItems = () => [
         title: '分割线',
         description: '插入水平分割线',
         icon: MinusSquare,
+        aliases: ['hr', 'line', 'divider'],
         command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
             editor.chain().focus().deleteRange(range).setHorizontalRule().run()
         },
@@ -100,6 +110,7 @@ export const getSuggestionItems = () => [
         title: '表格',
         description: '插入表格',
         icon: TableIcon,
+        aliases: ['table', 'grid', 'tb'],
         command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
             editor
                 .chain()

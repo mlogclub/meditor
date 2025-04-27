@@ -1,5 +1,8 @@
 <template>
   <div class="slash-commands" ref="slashCommandsRef">
+    <div v-if="items.length > 0" class="search-hint">
+      继续输入关键词筛选菜单...
+    </div>
     <button
       v-for="item in items"
       :key="item.title"
@@ -10,7 +13,12 @@
       <component :is="item.icon" class="item-icon" :size="18" />
       <div class="item-content">
         <div class="item-title">{{ item.title }}</div>
-        <div class="item-description">{{ item.description }}</div>
+        <div class="item-description">
+          {{ item.description }}
+          <span v-if="item.aliases && item.aliases.length > 0" class="item-aliases">
+            快捷指令: {{ item.aliases.join(', ') }}
+          </span>
+        </div>
       </div>
     </button>
   </div>
@@ -187,6 +195,14 @@ defineExpose({
   }
 }
 
+.search-hint {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+  padding: 0 0.5rem;
+  font-style: italic;
+}
+
 .slash-item {
   display: flex;
   align-items: center;
@@ -226,6 +242,12 @@ defineExpose({
   .item-description {
     font-size: 12px;
     color: #6b7280;
+    
+    .item-aliases {
+      font-style: italic;
+      opacity: 0.8;
+      margin-left: 4px;
+    }
   }
 }
 

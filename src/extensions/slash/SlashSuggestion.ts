@@ -19,12 +19,20 @@ export const SlashSuggestion = Extension.create({
         items: ({ query }: { query: string }) => {
           // 过滤出匹配的菜单项
           const matchedItems = getSuggestionItems()
-            .filter((item: CommandItem) =>
-              item.title.toLowerCase().startsWith(query.toLowerCase())
-            )
+            .filter((item: CommandItem) => {
+              // 如果查询为空，显示所有项
+              if (!query) return true
+              
+              // 匹配标题、描述或别名（如果有）
+              const searchQuery = query.toLowerCase().trim()
+              return (
+                item.title.toLowerCase().includes(searchQuery) || 
+                item.description.toLowerCase().includes(searchQuery) ||
+                (item.aliases && item.aliases.some(alias => alias.toLowerCase().includes(searchQuery)))
+              )
+            })
             .slice(0, 10)
           
-          // 如果没有匹配项或查询为空，返回空数组
           return matchedItems
         },
       },
