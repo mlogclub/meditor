@@ -188,7 +188,7 @@ defineExpose({
   
   // 美化滚动条样式
   &::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
     opacity: 0;
     transition: opacity 0.3s;
   }
