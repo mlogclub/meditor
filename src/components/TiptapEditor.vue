@@ -2,6 +2,7 @@
   <div class="editor-container">
     <EditorToolbar :editor="editor" />
     <editor-content :editor="editor" class="editor-content" />
+    <TableBubbleMenu :editor="editor" v-if="editor" />
   </div>
 </template>
 
@@ -14,10 +15,6 @@ import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
 import { CustomLink } from "../extensions/link";
-import Table from "@tiptap/extension-table";
-import TableRow from "@tiptap/extension-table-row";
-import TableCell from "@tiptap/extension-table-cell";
-import TableHeader from "@tiptap/extension-table-header";
 import Highlight from "@tiptap/extension-highlight";
 import { Editor } from "@tiptap/core";
 import { BubbleMenu } from "@tiptap/extension-bubble-menu";
@@ -27,6 +24,8 @@ import { SlashSuggestion } from "../extensions/slash";
 import EditorToolbar from "./EditorToolbar.vue";
 import { ImageUpload } from "../extensions/image-upload";
 import Placeholder from "@tiptap/extension-placeholder";
+import { TableExtensions } from "../extensions/table";
+import TableBubbleMenu from "../extensions/table/TableBubbleMenu.vue";
 
 import "tippy.js/dist/tippy.css";
 import "../styles/scrollbar.css";
@@ -68,10 +67,7 @@ const editor = useEditor({
         rel: "noopener noreferrer",
       },
     }),
-    Table,
-    TableRow,
-    TableHeader,
-    TableCell,
+    ...TableExtensions,
     SlashSuggestion,
     BubbleMenu,
     FloatingMenu,
@@ -178,6 +174,46 @@ onBeforeUnmount(() => {
       height: 0;
       pointer-events: none;
     }
+    
+    /* 表格样式 */
+    table {
+      border-collapse: collapse;
+      margin: 1em 0;
+      overflow: hidden;
+      width: 100%;
+      table-layout: fixed;
+      
+      td, th {
+        border: 1px solid #e5e7eb;
+        box-sizing: border-box;
+        min-width: 1em;
+        padding: 0.5em;
+        position: relative;
+        vertical-align: top;
+        
+        > * {
+          margin-bottom: 0;
+        }
+      }
+      
+      th {
+        background-color: #f9fafb;
+        font-weight: bold;
+        text-align: left;
+      }
+      
+      .selectedCell:after {
+        background: rgba(200, 200, 255, 0.4);
+        content: "";
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        pointer-events: none;
+        position: absolute;
+        z-index: 2;
+      }
+    }
   }
 
   /* 暗色主题的表格样式 */
@@ -185,6 +221,21 @@ onBeforeUnmount(() => {
     /* 暗色主题的Placeholder样式 */
     p.is-editor-empty:first-child::before {
       color: #6b7280;
+    }
+    
+    /* 暗色主题的表格样式 */
+    table {
+      th {
+        background-color: #374151;
+      }
+      
+      td, th {
+        border-color: #4b5563;
+      }
+      
+      .selectedCell:after {
+        background: rgba(100, 100, 150, 0.4);
+      }
     }
   }
 

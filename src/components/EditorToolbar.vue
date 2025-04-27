@@ -16,6 +16,7 @@
     <HorizontalRuleButton :editor="editor" />
     <LinkButton :editor="editor" />
     <ImageUploadButton :editor="editor" />
+    <TableButton :editor="editor" />
     <ToolbarDivider />
     <AlignLeftButton :editor="editor" />
     <AlignCenterButton :editor="editor" />
@@ -47,6 +48,7 @@ import AlignCenterButton from './toolbar/AlignCenterButton.vue'
 import AlignRightButton from './toolbar/AlignRightButton.vue'
 import TextColorButton from './toolbar/TextColorButton.vue'
 import BackgroundColorButton from './toolbar/BackgroundColorButton.vue'
+import TableButton from './toolbar/TableButton.vue'
 import '../styles/toolbar.css'
 
 defineProps<{
