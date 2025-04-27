@@ -6,11 +6,10 @@
       placement: 'top',
       duration: 150,
       arrow: false,
-      offset: [0, 10],
+      offset: [0, 20],
       hideOnClick: false,
       interactive: true,
-      zIndex: 20,
-      theme: 'custom'
+      theme: 'custom',
     }"
     :should-show="shouldShow"
     class="table-bubble-menu-wrapper"
@@ -36,10 +35,18 @@
         <LucideDelete :size="16" />
       </button>
       <div class="divider"></div>
-      <button @click="toggleHeaderColumn" :class="{ active: isHeaderColumn }" title="切换标题列">
+      <button
+        @click="toggleHeaderColumn"
+        :class="{ active: isHeaderColumn }"
+        title="切换标题列"
+      >
         <LucideHeading1 :size="16" />
       </button>
-      <button @click="toggleHeaderRow" :class="{ active: isHeaderRow }" title="切换标题行">
+      <button
+        @click="toggleHeaderRow"
+        :class="{ active: isHeaderRow }"
+        title="切换标题行"
+      >
         <LucideHeading :size="16" />
       </button>
       <div class="divider"></div>
@@ -54,26 +61,26 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import { Editor, BubbleMenu } from '@tiptap/vue-3'
-import { 
-  LucideColumns, 
-  LucideRows, 
-  LucideDelete, 
-  LucideHeading1, 
-  LucideHeading, 
-  LucideMerge, 
-  LucideTrash2 
-} from 'lucide-vue-next'
+import { computed, onMounted } from "vue";
+import { Editor, BubbleMenu } from "@tiptap/vue-3";
+import {
+  LucideColumns,
+  LucideRows,
+  LucideDelete,
+  LucideHeading1,
+  LucideHeading,
+  LucideMerge,
+  LucideTrash2,
+} from "lucide-vue-next";
 
 const props = defineProps<{
-  editor: Editor | null
-}>()
+  editor: Editor | null;
+}>();
 
 // 自定义tippy主题
 onMounted(() => {
   // 添加自定义CSS
-  const style = document.createElement('style')
+  const style = document.createElement("style");
   style.textContent = `
     .tippy-box[data-theme~='custom'] {
       background-color: transparent;
@@ -83,64 +90,66 @@ onMounted(() => {
     .tippy-box[data-theme~='custom'] .tippy-content {
       padding: 0;
     }
-  `
-  document.head.appendChild(style)
-})
+  `;
+  document.head.appendChild(style);
+});
 
 // 检查是否显示表格气泡菜单
 const shouldShow = ({ editor, view, state, oldState, from, to }: any) => {
-  return editor.isActive('table')
-}
+  return editor.isActive("table");
+};
 
-const isHeaderRow = computed(() => props.editor?.isActive({ row: 0 }))
-const isHeaderColumn = computed(() => props.editor?.isActive('tableHeaderCell'))
+const isHeaderRow = computed(() => props.editor?.isActive({ row: 0 }));
+const isHeaderColumn = computed(() =>
+  props.editor?.isActive("tableHeaderCell")
+);
 
 // 表格操作方法
 const addColumnBefore = () => {
-  props.editor?.chain().focus().addColumnBefore().run()
-}
+  props.editor?.chain().focus().addColumnBefore().run();
+};
 
 const addColumnAfter = () => {
-  props.editor?.chain().focus().addColumnAfter().run()
-}
+  props.editor?.chain().focus().addColumnAfter().run();
+};
 
 const deleteColumn = () => {
-  props.editor?.chain().focus().deleteColumn().run()
-}
+  props.editor?.chain().focus().deleteColumn().run();
+};
 
 const addRowBefore = () => {
-  props.editor?.chain().focus().addRowBefore().run()
-}
+  props.editor?.chain().focus().addRowBefore().run();
+};
 
 const addRowAfter = () => {
-  props.editor?.chain().focus().addRowAfter().run()
-}
+  props.editor?.chain().focus().addRowAfter().run();
+};
 
 const deleteRow = () => {
-  props.editor?.chain().focus().deleteRow().run()
-}
+  props.editor?.chain().focus().deleteRow().run();
+};
 
 const toggleHeaderRow = () => {
-  props.editor?.chain().focus().toggleHeaderRow().run()
-}
+  props.editor?.chain().focus().toggleHeaderRow().run();
+};
 
 const toggleHeaderColumn = () => {
-  props.editor?.chain().focus().toggleHeaderColumn().run()
-}
+  props.editor?.chain().focus().toggleHeaderColumn().run();
+};
 
 const mergeOrSplitCells = () => {
-  const canMerge = props.editor?.can().mergeCells()
-  
+  const canMerge = props.editor?.can().mergeCells();
+
   if (canMerge) {
-    props.editor?.chain().focus().mergeCells().run()
+    props.editor?.chain().focus().mergeCells().run();
   } else {
-    props.editor?.chain().focus().splitCell().run()
+    props.editor?.chain().focus().splitCell().run();
   }
-}
+};
 
 const deleteTable = () => {
-  props.editor?.chain().focus().deleteTable().run()
-}
+  props.editor?.chain().focus().deleteTable().run();
+};
 </script>
 
 <style lang="scss" scoped>
@@ -151,7 +160,7 @@ const deleteTable = () => {
   border-radius: 6px;
   box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
   border: none;
-  
+
   button {
     width: 28px;
     height: 28px;
@@ -165,22 +174,22 @@ const deleteTable = () => {
     justify-content: center;
     cursor: pointer;
     color: #4b5563;
-    
+
     &:hover {
       background-color: #f3f4f6;
       color: #1f2937;
     }
-    
+
     &.active {
       background-color: #e5e7eb;
       color: #1f2937;
     }
   }
-  
+
   .divider {
     width: 1px;
     margin: 4px 2px;
     background-color: #e5e7eb;
   }
 }
-</style> 
+</style>
