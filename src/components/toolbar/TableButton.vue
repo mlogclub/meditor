@@ -10,7 +10,7 @@
 
     <div v-if="showSelector" class="table-selector">
       <div class="table-size-display">{{ selectedRows }} × {{ selectedCols }}</div>
-      <div class="table-grid">
+      <div class="table-grid" @click="insertTable">
         <div 
           v-for="row in 10" 
           :key="`row-${row}`" 
@@ -22,7 +22,6 @@
             class="table-grid-cell"
             :class="{ 'is-selected': isSelected(row, col) }"
             @mouseover="updateSelection(row, col)"
-            @click="insertTable"
           ></div>
         </div>
       </div>
@@ -115,6 +114,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  cursor: pointer;
 }
 
 .table-grid-row {
@@ -126,7 +126,6 @@ onBeforeUnmount(() => {
   width: 12px;
   height: 12px;
   background-color: #e5e7eb;
-  cursor: pointer;
   border-radius: 1px;
 }
 
