@@ -128,12 +128,42 @@ defineExpose({
   width: 240px;
   max-height: 400px;
   overflow-y: auto;
+  
+  // 美化滚动条样式
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    transition: background-color 0.3s;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  }
+  
+  // Firefox滚动条样式
   scrollbar-width: thin;
-  scrollbar-color: #c1c1c1 #f1f1f1;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 
   /* 暗色主题滚动条 */
   .dark & {
-    scrollbar-color: #4a4a4a #2d2d2d;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.2);
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+    }
   }
 }
 
