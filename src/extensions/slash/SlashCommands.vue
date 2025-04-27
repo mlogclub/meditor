@@ -16,7 +16,7 @@
         <div class="item-description">
           {{ item.description }}
           <span v-if="item.aliases && item.aliases.length > 0" class="item-aliases">
-            快捷指令: {{ item.aliases.join(', ') }}
+            /{{ item.aliases[0] }}
           </span>
         </div>
       </div>
