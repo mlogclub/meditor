@@ -132,6 +132,12 @@ defineExpose({
   // 美化滚动条样式
   &::-webkit-scrollbar {
     width: 6px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  &:hover::-webkit-scrollbar {
+    opacity: 1;
   }
   
   &::-webkit-scrollbar-track {
@@ -143,6 +149,8 @@ defineExpose({
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 3px;
     transition: background-color 0.3s;
+    min-height: 30px;
+    max-height: 60px;
     
     &:hover {
       background-color: rgba(0, 0, 0, 0.3);
@@ -151,18 +159,30 @@ defineExpose({
   
   // Firefox滚动条样式
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  scrollbar-color: transparent transparent;
+  
+  &:hover {
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  }
 
   /* 暗色主题滚动条 */
   .dark & {
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    scrollbar-color: transparent transparent;
+    
+    &:hover {
+      scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    }
     
     &::-webkit-scrollbar-thumb {
-      background-color: rgba(255, 255, 255, 0.2);
+      background-color: rgba(255, 255, 255, 0);
       
       &:hover {
         background-color: rgba(255, 255, 255, 0.3);
       }
+    }
+    
+    &:hover::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.2);
     }
   }
 }
