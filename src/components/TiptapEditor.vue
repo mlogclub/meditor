@@ -182,6 +182,12 @@ onBeforeUnmount(() => {
       overflow: hidden;
       width: 100%;
       table-layout: fixed;
+      border-radius: 4px;
+      
+      &.has-focus {
+        outline: 2px solid #60a5fa;
+        outline-offset: 2px;
+      }
       
       td, th {
         border: 1px solid #e5e7eb;
@@ -235,6 +241,10 @@ onBeforeUnmount(() => {
       
       .selectedCell:after {
         background: rgba(100, 100, 150, 0.4);
+      }
+      
+      &.has-focus {
+        outline-color: #3b82f6;
       }
     }
   }

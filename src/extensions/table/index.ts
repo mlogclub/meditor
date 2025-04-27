@@ -1,7 +1,7 @@
 import { Extension } from '@tiptap/core'
 import { Plugin, PluginKey } from 'prosemirror-state'
-import { BubbleMenu } from '@tiptap/extension-bubble-menu'
-import { setBlockType } from 'prosemirror-commands'
+// import { BubbleMenu } from '@tiptap/extension-bubble-menu'
+// import { setBlockType } from 'prosemirror-commands'
 import Table from '@tiptap/extension-table'
 import TableRow from '@tiptap/extension-table-row'
 import TableHeader from '@tiptap/extension-table-header'
@@ -31,15 +31,6 @@ export const EnhancedTable = Extension.create<EnhancedTableOptions>({
   addOptions() {
     return {
       ...defaultOptions,
-      bubble: {
-        pluginKey: 'tableBubbleMenu',
-        element: null,
-        tippyOptions: {
-          placement: 'top-start',
-          hideOnClick: false,
-          interactive: true,
-        },
-      },
     }
   },
 
