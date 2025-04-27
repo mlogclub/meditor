@@ -49,13 +49,19 @@ if (props.items.length > 0) {
 
 // 监听 items 变化，当 items 为空时清除选中项
 // 当 items 有值但没有选中项时，选择第一项
+// 当 items 因筛选而变化时，总是选中第一项
 watch(() => props.items, (newItems) => {
   if (newItems.length === 0) {
     selectedItem.value = null;
     selectedIndex.value = 0;
-  } else if (!selectedItem.value && newItems.length > 0) {
+  } else {
+    // 始终选择第一个匹配项，无论是否已有选中项
     selectedItem.value = newItems[0];
     selectedIndex.value = 0;
+    // 确保在下一个渲染周期滚动到选中项
+    nextTick(() => {
+      scrollToSelected();
+    });
   }
 }, { immediate: true });
 
