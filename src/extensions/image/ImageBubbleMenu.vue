@@ -1,9 +1,10 @@
 <template>
   <BubbleMenu
-    v-if="editor && editor.isActive('resizableImage')"
+    v-if="editor"
     :tippy-options="{
       placement: 'top',
       theme: 'light',
+      
     }"
     :editor="editor"
     :should-show="shouldShow"
@@ -59,12 +60,19 @@ const props = defineProps<{
 }>()
 
 // 判断菜单是否应该显示
-const shouldShow = ({ editor, view, state, from }) => {
-  const { doc, selection } = state
-  const { empty, anchor } = selection
+const shouldShow = ({ editor, view, state }) => {
+  const { selection } = state
   
-  // 只在选中图片时显示
-  return editor.isActive('resizableImage')
+  // 检查是否为节点选择
+  if (!isNodeSelection(selection)) {
+    return false
+  }
+  
+  // 获取选中的节点
+  const nodeType = selection.node.type.name
+  
+  // 只有当选择的是 resizableImage 节点时才显示
+  return nodeType === 'resizableImage'
 }
 
 // 获取当前图片的属性
