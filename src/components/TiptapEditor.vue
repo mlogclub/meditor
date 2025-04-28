@@ -3,11 +3,12 @@
     <EditorToolbar :editor="editor" />
     <editor-content :editor="editor" class="editor-content" />
     <TableBubbleMenu :editor="editor" v-if="editor" />
+    <ImageBubbleMenu :editor="editor" v-if="editor" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watch } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch, computed } from "vue";
 import { useEditor, EditorContent } from "@tiptap/vue-3";
 
 import StarterKit from "@tiptap/starter-kit";
@@ -24,6 +25,8 @@ import EditorToolbar from "./EditorToolbar.vue";
 import Placeholder from "@tiptap/extension-placeholder";
 import { TableExtensions } from "../extensions/table";
 import TableBubbleMenu from "../extensions/table/TableBubbleMenu.vue";
+import { ImageExtensions, pasteImagePlugin } from "../extensions/image";
+import ImageBubbleMenu from "../extensions/image/ImageBubbleMenu.vue";
 
 import "tippy.js/dist/tippy.css";
 import "../styles/scrollbar.css";
@@ -45,6 +48,11 @@ const emit = defineEmits<{
 
 const editorRef = ref<Editor | null>(null);
 
+// 处理图片上传错误
+const handleImageUploadError = (error: Error, file?: File) => {
+  emit("image-upload-error", error, file);
+};
+
 const editor = useEditor({
   content: props.modelValue,
   extensions: [
@@ -61,6 +69,7 @@ const editor = useEditor({
       },
     }),
     ...TableExtensions,
+    ...ImageExtensions,
     SlashSuggestion,
     BubbleMenu,
     FloatingMenu,
@@ -77,7 +86,21 @@ const editor = useEditor({
   onUpdate: ({ editor }) => {
     emit("update:modelValue", editor.getHTML());
   },
+  editorProps: {
+    // 添加粘贴图片插件
+    handlePaste: (view, event, slice) => {
+      // 这里什么都不做，由插件处理粘贴
+      return false;
+    }
+  }
 });
+
+// 添加粘贴图片插件
+watch(() => props.customImageUpload, (newValue) => {
+  if (editor.value) {
+    editor.value.registerPlugin(pasteImagePlugin(newValue));
+  }
+}, { immediate: true });
 
 watch(
   () => props.modelValue,
@@ -192,6 +215,42 @@ onBeforeUnmount(() => {
         z-index: 2;
       }
     }
+    
+    /* 可调整大小的图片样式 */
+    .resizable-image {
+      position: relative;
+      max-width: 100%;
+      display: inline-block;
+      
+      &:hover {
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          border: 2px solid #60a5fa;
+          pointer-events: none;
+        }
+      }
+      
+      /* 对齐方式样式 */
+      &[data-alignment="center"] {
+        display: block;
+        margin: 0 auto;
+      }
+      
+      &[data-alignment="left"] {
+        display: block;
+        margin: 0 auto 0 0;
+      }
+      
+      &[data-alignment="right"] {
+        display: block;
+        margin: 0 0 0 auto;
+      }
+    }
   }
 
   /* 暗色主题的表格样式 */
@@ -217,6 +276,15 @@ onBeforeUnmount(() => {
       
       &.has-focus {
         outline-color: #3b82f6;
+      }
+    }
+    
+    /* 暗色主题下的可调整大小图片样式 */
+    .resizable-image {
+      &:hover {
+        &::after {
+          border-color: #3b82f6;
+        }
       }
     }
   }
