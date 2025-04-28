@@ -4,7 +4,6 @@
     :tippy-options="{
       placement: 'top',
       theme: 'light',
-      
     }"
     :editor="editor"
     :should-show="shouldShow"
@@ -45,7 +44,7 @@
           min="50"
         />
       </div>
-      <div class="size-controls">
+      <!-- <div class="size-controls">
         <span>高度:</span>
         <input
           type="number"
@@ -54,7 +53,7 @@
           class="size-input"
           min="50"
         />
-      </div>
+      </div> -->
     </div>
   </BubbleMenu>
 </template>
@@ -241,10 +240,6 @@ const setAlignment = (alignment: string) => {
 <style lang="scss">
 .image-bubble-menu {
   display: flex;
-  padding: 0.5rem;
-  border-radius: 4px;
-  background: white;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   z-index: 100;
   
   .image-controls {

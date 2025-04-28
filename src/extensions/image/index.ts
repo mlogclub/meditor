@@ -1,5 +1,5 @@
 import Image from '@tiptap/extension-image'
-import { mergeAttributes, NodeView } from '@tiptap/core'
+import { mergeAttributes } from '@tiptap/core'
 import { VueNodeViewRenderer } from '@tiptap/vue-3'
 import ResizableImageNodeView from './ResizableImageNodeView.vue'
 
