@@ -1,5 +1,7 @@
 import Image from '@tiptap/extension-image'
-import { mergeAttributes } from '@tiptap/core'
+import { mergeAttributes, NodeView } from '@tiptap/core'
+import { VueNodeViewRenderer } from '@tiptap/vue-3'
+import ResizableImageNodeView from './ResizableImageNodeView.vue'
 
 export const ResizableImage = Image.extend({
   name: 'resizableImage',
@@ -87,6 +89,11 @@ export const ResizableImage = Image.extend({
         return commands.updateAttributes('resizableImage', { alignment })
       },
     }
+  },
+  
+  // 添加自定义节点视图，使用Vue组件包装图片
+  addNodeView() {
+    return VueNodeViewRenderer(ResizableImageNodeView)
   },
 })
 

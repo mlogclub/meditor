@@ -29,5 +29,70 @@
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #666666;
+  background: #555555;
+}
+
+/* 调整图片大小的样式 */
+.resize-handle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: #3b82f6;
+  border-radius: 50%;
+  border: 1px solid white;
+  transition: opacity 0.2s ease;
+  z-index: 100;
+}
+
+.resize-handle-nw {
+  top: -4px;
+  left: -4px;
+  cursor: nwse-resize;
+}
+
+.resize-handle-ne {
+  top: -4px;
+  right: -4px;
+  cursor: nesw-resize;
+}
+
+.resize-handle-sw {
+  bottom: -4px;
+  left: -4px;
+  cursor: nesw-resize;
+}
+
+.resize-handle-se {
+  bottom: -4px;
+  right: -4px;
+  cursor: nwse-resize;
+}
+
+.resize-handle-n {
+  top: -4px;
+  left: calc(50% - 4px);
+  cursor: ns-resize;
+}
+
+.resize-handle-s {
+  bottom: -4px;
+  left: calc(50% - 4px);
+  cursor: ns-resize;
+}
+
+.resize-handle-e {
+  right: -4px;
+  top: calc(50% - 4px);
+  cursor: ew-resize;
+}
+
+.resize-handle-w {
+  left: -4px;
+  top: calc(50% - 4px);
+  cursor: ew-resize;
+}
+
+/* 调整大小时禁用文本选择 */
+.ProseMirror.resizing-image {
+  user-select: none;
 } 
