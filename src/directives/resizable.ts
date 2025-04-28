@@ -90,6 +90,11 @@ export const vResizable: Directive = {
       el.startWidth = el.offsetWidth
       el.startHeight = el.offsetHeight
       
+      // 确保宽高比已计算
+      if (!el.aspectRatio || el.aspectRatio <= 0) {
+        computeAspectRatio()
+      }
+      
       // 添加临时全局事件监听
       document.addEventListener('pointermove', el.handlePointerMove!)
       document.addEventListener('pointerup', el.handlePointerUp!)
@@ -117,50 +122,60 @@ export const vResizable: Directive = {
       let newWidth = el.startWidth!
       let newHeight = el.startHeight!
       
+      // 确保宽高比
+      const aspectRatio = el.aspectRatio || el.startWidth! / el.startHeight!
+      
+      // 根据拖动方向确定主导维度
       switch (handlePos) {
-        case 'se': // 右下
+        case 'se': // 右下 - 以宽度为主导
           newWidth = el.startWidth! + deltaX
-          newHeight = el.startHeight! + deltaY
+          newHeight = newWidth / aspectRatio
           break
-        case 'ne': // 右上
+        case 'ne': // 右上 - 以宽度为主导
           newWidth = el.startWidth! + deltaX
-          newHeight = el.startHeight! - deltaY
+          newHeight = newWidth / aspectRatio
           break
-        case 'sw': // 左下
+        case 'sw': // 左下 - 以宽度为主导
           newWidth = el.startWidth! - deltaX
-          newHeight = el.startHeight! + deltaY
+          newHeight = newWidth / aspectRatio
           break
-        case 'nw': // 左上
+        case 'nw': // 左上 - 以宽度为主导
           newWidth = el.startWidth! - deltaX
-          newHeight = el.startHeight! - deltaY
+          newHeight = newWidth / aspectRatio
           break
-        case 'n': // 上
+        case 'n': // 上 - 以高度为主导
           newHeight = el.startHeight! - deltaY
-          newWidth = newHeight * el.aspectRatio!
+          newWidth = newHeight * aspectRatio
           break
-        case 's': // 下
+        case 's': // 下 - 以高度为主导
           newHeight = el.startHeight! + deltaY
-          newWidth = newHeight * el.aspectRatio!
+          newWidth = newHeight * aspectRatio
           break
-        case 'e': // 右
+        case 'e': // 右 - 以宽度为主导
           newWidth = el.startWidth! + deltaX
-          newHeight = newWidth / el.aspectRatio!
+          newHeight = newWidth / aspectRatio
           break
-        case 'w': // 左
+        case 'w': // 左 - 以宽度为主导
           newWidth = el.startWidth! - deltaX
-          newHeight = newWidth / el.aspectRatio!
+          newHeight = newWidth / aspectRatio
           break
       }
       
       // 防止尺寸过小
-      if (newWidth < 30) newWidth = 30
-      if (newHeight < 30) newHeight = 30
+      if (newWidth < 30) {
+        newWidth = 30
+        newHeight = newWidth / aspectRatio
+      }
+      if (newHeight < 30) {
+        newHeight = 30
+        newWidth = newHeight * aspectRatio
+      }
       
       // 更新元素尺寸
       el.style.width = `${newWidth}px`
       el.style.height = `${newHeight}px`
       
-      console.log("调整大小:", newWidth, newHeight)
+      console.log("调整大小:", newWidth, newHeight, "宽高比:", aspectRatio)
     }
 
     // 结束调整大小
