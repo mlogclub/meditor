@@ -42,6 +42,22 @@ export const ResizableImage = Image.extend({
           }
         },
       },
+      // 保存图片宽高比
+      aspectRatio: {
+        default: null,
+        parseHTML: element => {
+          const ratio = element.getAttribute('data-aspect-ratio')
+          return ratio ? parseFloat(ratio) : null
+        },
+        renderHTML: attributes => {
+          if (!attributes.aspectRatio) {
+            return {}
+          }
+          return {
+            'data-aspect-ratio': attributes.aspectRatio,
+          }
+        },
+      },
       // 图片对齐方式
       alignment: {
         default: 'center',
@@ -55,6 +71,10 @@ export const ResizableImage = Image.extend({
             'style': `display: block; margin: ${attributes.alignment === 'center' ? '0 auto' : attributes.alignment === 'left' ? '0 auto 0 0' : '0 0 0 auto'};`,
           }
         },
+      },
+      // 唯一标识符
+      id: {
+        default: () => `img-${Date.now()}`,
       },
     }
   },
@@ -132,7 +152,8 @@ export function pasteImagePlugin(customImageUpload) {
               const { schema } = view.state
               const imageNode = schema.nodes.resizableImage.create({
                 src: imageUrl,
-                alignment: 'center'
+                alignment: 'center',
+                id: `img-${Date.now()}`
               })
               
               const transaction = view.state.tr.replaceSelectionWith(imageNode)

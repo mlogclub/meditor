@@ -1,15 +1,18 @@
 <template>
   <node-view-wrapper class="resizable-image-wrapper" :class="{ 'selected': selected }">
     <img
+      ref="imageRef"
       :src="node.attrs.src"
       :alt="node.attrs.alt"
       :title="node.attrs.title"
       :width="node.attrs.width"
       :height="node.attrs.height"
       :data-alignment="node.attrs.alignment"
+      :data-aspect-ratio="aspectRatio"
       :style="imageStyle"
       class="resizable-image"
-      v-resizable="{ editor }"
+      v-resizable="{ editor, nodeId: node.attrs.id }"
+      @load="calculateAspectRatio"
     />
     <!-- 在图片被选中时显示调整大小的边框和手柄 -->
     <template v-if="selected">
@@ -29,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue'
+import { computed, onMounted, watch, ref } from 'vue'
 import { NodeViewWrapper } from '@tiptap/vue-3'
 
 const props = defineProps({
@@ -51,9 +54,122 @@ const props = defineProps({
   }
 })
 
+const imageRef = ref<HTMLImageElement | null>(null)
+const aspectRatio = ref<number | null>(null)
+const originalWidth = ref<number | null>(null)
+const originalHeight = ref<number | null>(null)
+
+// 计算宽高比
+const calculateAspectRatio = () => {
+  const imgEl = imageRef.value
+  if (!imgEl) return
+  
+  // 计算自然宽高比
+  if (imgEl.naturalWidth && imgEl.naturalHeight) {
+    aspectRatio.value = imgEl.naturalWidth / imgEl.naturalHeight
+    console.log('计算原始宽高比:', aspectRatio.value)
+  } 
+  // 如果已经设置了宽高
+  else if (props.node.attrs.width && props.node.attrs.height) {
+    const width = typeof props.node.attrs.width === 'string' 
+      ? parseInt(props.node.attrs.width.replace('px', ''))
+      : props.node.attrs.width
+    const height = typeof props.node.attrs.height === 'string'
+      ? parseInt(props.node.attrs.height.replace('px', ''))
+      : props.node.attrs.height
+    
+    if (width && height) {
+      aspectRatio.value = width / height
+      console.log('从属性计算宽高比:', aspectRatio.value)
+    }
+  }
+  
+  // 保存原始尺寸
+  if (imgEl.width && imgEl.height) {
+    originalWidth.value = imgEl.width
+    originalHeight.value = imgEl.height
+  }
+  
+  // 如果需要，可以更新图片节点属性
+  if (aspectRatio.value && !props.node.attrs.aspectRatio) {
+    props.updateAttributes({
+      aspectRatio: aspectRatio.value
+    })
+  }
+}
+
+// 更新图片尺寸样式
+const updateImageStyles = (width, height) => {
+  const imgEl = imageRef.value
+  if (!imgEl) return
+  
+  if (width) {
+    imgEl.style.width = typeof width === 'string' ? width : `${width}px`
+  }
+  
+  if (height) {
+    imgEl.style.height = typeof height === 'string' ? height : `${height}px`
+  }
+  
+  console.log('直接更新图片样式:', width, height)
+}
+
 // 监听选中状态变化
 watch(() => props.selected, (isSelected) => {
   console.log('图片选中状态:', isSelected)
+})
+
+// 监听节点属性变化
+watch(() => props.node.attrs, (newAttrs, oldAttrs) => {
+  console.log('图片属性更新:', newAttrs)
+  
+  // 如果宽高比存在于属性中，但本地没有
+  if (newAttrs.aspectRatio && !aspectRatio.value) {
+    aspectRatio.value = newAttrs.aspectRatio
+  }
+  
+  // 检查宽度或高度是否发生变化
+  const newWidth = newAttrs.width
+  const oldWidth = oldAttrs?.width
+  const newHeight = newAttrs.height
+  const oldHeight = oldAttrs?.height
+  
+  if (newWidth !== oldWidth || newHeight !== oldHeight) {
+    // 直接更新图片样式
+    updateImageStyles(newWidth, newHeight)
+  }
+  
+  // 更新原始尺寸记录
+  if (newAttrs.width) {
+    const width = typeof newAttrs.width === 'string'
+      ? parseInt(newAttrs.width.replace('px', ''))
+      : newAttrs.width
+    
+    if (width) {
+      originalWidth.value = width
+    }
+  }
+  
+  if (newAttrs.height) {
+    const height = typeof newAttrs.height === 'string'
+      ? parseInt(newAttrs.height.replace('px', ''))
+      : newAttrs.height
+    
+    if (height) {
+      originalHeight.value = height
+    }
+  }
+}, { deep: true })
+
+// 组件挂载时
+onMounted(() => {
+  calculateAspectRatio()
+  
+  // 初始应用样式
+  const { width, height } = props.node.attrs
+  if (width || height) {
+    updateImageStyles(width, height)
+  }
 })
 
 // 计算图片样式
