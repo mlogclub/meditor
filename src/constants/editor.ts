@@ -5,9 +5,6 @@
 // 工具栏图标大小
 export const TOOLBAR_ICON_SIZE = 16
 
-// 其他编辑器相关常量可以在这里添加
-export const EDITOR_DEFAULT_CONTENT = ''
-
 // 默认颜色配置
 export const TEXT_COLOR_PALETTE = [
   '#c00000', '#ff0000', '#ffc000', '#ffff00', '#a5d610', '#00b050', '#00b0f0', '#0070c0', '#002060', '#7030a0', 

@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watch, computed } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { useEditor, EditorContent } from "@tiptap/vue-3";
 
 import StarterKit from "@tiptap/starter-kit";
@@ -19,10 +19,8 @@ import Highlight from "@tiptap/extension-highlight";
 import { Editor } from "@tiptap/core";
 import { BubbleMenu } from "@tiptap/extension-bubble-menu";
 import { FloatingMenu } from "@tiptap/extension-floating-menu";
-import { Image } from "../extensions/image";
 import { SlashSuggestion } from "../extensions/slash";
 import EditorToolbar from "./EditorToolbar.vue";
-import { ImageUpload } from "../extensions/image-upload";
 import Placeholder from "@tiptap/extension-placeholder";
 import { TableExtensions } from "../extensions/table";
 import TableBubbleMenu from "../extensions/table/TableBubbleMenu.vue";
@@ -47,11 +45,6 @@ const emit = defineEmits<{
 
 const editorRef = ref<Editor | null>(null);
 
-// 处理图片上传错误
-const handleImageUploadError = (error: Error, file?: File) => {
-  emit("image-upload-error", error, file);
-};
-
 const editor = useEditor({
   content: props.modelValue,
   extensions: [
@@ -74,29 +67,8 @@ const editor = useEditor({
     Highlight.configure({
       multicolor: true,
     }),
-    Image,
     Placeholder.configure({
       placeholder: "输入 / 插入内容",
-    }),
-    ImageUpload.configure({
-      uploadFn:
-        props.customImageUpload ||
-        ((file: File) => {
-          return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as string);
-            reader.readAsDataURL(file);
-          });
-        }),
-      maxFileSize: props.maxImageSize || 5 * 1024 * 1024,
-      acceptMimeTypes: props.acceptImageTypes || [
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-        "image/webp",
-      ],
-      enableDragAndDrop: true,
-      onError: handleImageUploadError,
     }),
   ],
   onCreate: ({ editor }) => {
