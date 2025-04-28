@@ -13,6 +13,7 @@ interface ResizableHTMLElement extends HTMLElement {
   aspectRatio?: number
   editor?: any
   imageId?: string
+  currentHandle?: string // 记录当前活动的手柄位置
 }
 
 interface ResizableBinding {
@@ -66,9 +67,11 @@ export const vResizable: Directive = {
     el.handlePointerDown = (e: PointerEvent) => {
       const target = e.target as HTMLElement
       if (!target.classList.contains('resize-handle')) return
-
+      
       e.preventDefault()
       e.stopPropagation()
+      
+      console.log("开始拖动:", target.className)
       
       // 获取手柄位置标识
       const handlePos = Array.from(target.classList)
@@ -77,13 +80,16 @@ export const vResizable: Directive = {
       
       if (!handlePos) return
       
+      // 记录当前活动的手柄
+      el.currentHandle = handlePos
+      
       // 记录初始状态
       el.isResizing = true
       el.startX = e.clientX
       el.startY = e.clientY
       el.startWidth = el.offsetWidth
       el.startHeight = el.offsetHeight
-
+      
       // 添加临时全局事件监听
       document.addEventListener('pointermove', el.handlePointerMove!)
       document.addEventListener('pointerup', el.handlePointerUp!)
@@ -96,19 +102,12 @@ export const vResizable: Directive = {
 
     // 调整大小过程
     el.handlePointerMove = (e: PointerEvent) => {
-      if (!el.isResizing) return
+      if (!el.isResizing || !el.currentHandle) return
       
       e.preventDefault()
       
-      // 找到当前活动的调整手柄
-      const handleElement = document.querySelector('.resize-handle:active') as HTMLElement
-      if (!handleElement) return
-      
-      const handlePos = Array.from(handleElement.classList)
-        .find(cls => cls.startsWith('resize-handle-'))
-        ?.replace('resize-handle-', '')
-      
-      if (!handlePos) return
+      // 使用之前保存的手柄位置
+      const handlePos = el.currentHandle
       
       // 计算变化量
       const deltaX = e.clientX - el.startX!
@@ -160,6 +159,8 @@ export const vResizable: Directive = {
       // 更新元素尺寸
       el.style.width = `${newWidth}px`
       el.style.height = `${newHeight}px`
+      
+      console.log("调整大小:", newWidth, newHeight)
     }
 
     // 结束调整大小
@@ -168,12 +169,15 @@ export const vResizable: Directive = {
       
       e.preventDefault()
       
+      console.log("结束拖动")
+      
       // 移除临时事件监听
       document.removeEventListener('pointermove', el.handlePointerMove!)
       document.removeEventListener('pointerup', el.handlePointerUp!)
       
       // 恢复状态
       el.isResizing = false
+      el.currentHandle = undefined
       
       // 如果编辑器存在，更新图片节点的尺寸
       if (el.editor) {
@@ -196,17 +200,41 @@ export const vResizable: Directive = {
       }
     }
 
-    // 开始监听resize手柄上的事件
-    const wrapper = el.closest('.resizable-image-wrapper')
-    const resizeHandles = wrapper ? wrapper.querySelectorAll('.resize-handle') : null
+    // 为所有可能的调整手柄添加事件监听
+    const handler = (event: Event) => {
+      // 等待Vue组件完全渲染后绑定事件
+      setTimeout(() => {
+        const wrapper = el.closest('.resizable-image-wrapper')
+        const resizeHandles = wrapper ? wrapper.querySelectorAll('.resize-handle') : null
+        
+        if (resizeHandles && resizeHandles.length > 0) {
+          console.log("找到 resize 手柄:", resizeHandles.length)
+          resizeHandles.forEach(handle => {
+            handle.removeEventListener('pointerdown', el.handlePointerDown!)
+            handle.addEventListener('pointerdown', el.handlePointerDown!)
+          })
+        } else {
+          console.log("未找到 resize 手柄")
+        }
+      }, 100)
+    }
     
-    if (resizeHandles && resizeHandles.length > 0) {
-      resizeHandles.forEach(handle => {
-        handle.addEventListener('pointerdown', el.handlePointerDown!)
+    // 监听选中状态变化
+    const wrapper = el.closest('.resizable-image-wrapper')
+    if (wrapper) {
+      // 使用 MutationObserver 监听类变化
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+            handler(new Event('classchange'))
+          }
+        })
       })
-    } else {
-      // 如果没有找到预定义的手柄，则为图片本身添加事件监听
-      el.addEventListener('pointerdown', el.handlePointerDown!)
+      
+      observer.observe(wrapper, { attributes: true })
+      
+      // 初始运行一次
+      handler(new Event('init'))
     }
   },
 

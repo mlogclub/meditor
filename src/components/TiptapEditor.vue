@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watch, computed } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch, computed, provide } from "vue";
 import { useEditor, EditorContent } from "@tiptap/vue-3";
 
 import StarterKit from "@tiptap/starter-kit";
@@ -30,6 +30,7 @@ import ImageBubbleMenu from "../extensions/image/ImageBubbleMenu.vue";
 
 import "tippy.js/dist/tippy.css";
 import "../styles/scrollbar.css";
+import "../styles/resizable.css";
 
 const props = defineProps<{
   modelValue: string;
@@ -47,6 +48,9 @@ const emit = defineEmits<{
 }>();
 
 const editorRef = ref<Editor | null>(null);
+
+// 将自定义图片上传函数提供给子组件
+provide('customImageUpload', props.customImageUpload)
 
 // 处理图片上传错误
 const handleImageUploadError = (error: Error, file?: File) => {
