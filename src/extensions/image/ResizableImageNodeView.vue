@@ -67,7 +67,7 @@ const calculateAspectRatio = () => {
   // 计算自然宽高比
   if (imgEl.naturalWidth && imgEl.naturalHeight) {
     aspectRatio.value = imgEl.naturalWidth / imgEl.naturalHeight
-    console.log('计算原始宽高比:', aspectRatio.value)
+    // console.log('计算原始宽高比:', aspectRatio.value)
   } 
   // 如果已经设置了宽高
   else if (props.node.attrs.width && props.node.attrs.height) {
@@ -80,7 +80,7 @@ const calculateAspectRatio = () => {
     
     if (width && height) {
       aspectRatio.value = width / height
-      console.log('从属性计算宽高比:', aspectRatio.value)
+      // console.log('从属性计算宽高比:', aspectRatio.value)
     }
   }
   
@@ -111,17 +111,12 @@ const updateImageStyles = (width, height) => {
     imgEl.style.height = typeof height === 'string' ? height : `${height}px`
   }
   
-  console.log('直接更新图片样式:', width, height)
+  // console.log('直接更新图片样式:', width, height)
 }
-
-// 监听选中状态变化
-watch(() => props.selected, (isSelected) => {
-  console.log('图片选中状态:', isSelected)
-})
 
 // 监听节点属性变化
 watch(() => props.node.attrs, (newAttrs, oldAttrs) => {
-  console.log('图片属性更新:', newAttrs)
+  // console.log('图片属性更新:', newAttrs)
   
   // 如果宽高比存在于属性中，但本地没有
   if (newAttrs.aspectRatio && !aspectRatio.value) {

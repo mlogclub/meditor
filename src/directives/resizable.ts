@@ -71,7 +71,7 @@ export const vResizable: Directive = {
       e.preventDefault()
       e.stopPropagation()
       
-      console.log("开始拖动:", target.className)
+      // console.log("开始拖动:", target.className)
       
       // 获取手柄位置标识
       const handlePos = Array.from(target.classList)
@@ -175,7 +175,7 @@ export const vResizable: Directive = {
       el.style.width = `${newWidth}px`
       el.style.height = `${newHeight}px`
       
-      console.log("调整大小:", newWidth, newHeight, "宽高比:", aspectRatio)
+      // console.log("调整大小:", newWidth, newHeight, "宽高比:", aspectRatio)
     }
 
     // 结束调整大小
@@ -184,7 +184,7 @@ export const vResizable: Directive = {
       
       e.preventDefault()
       
-      console.log("结束拖动")
+      // console.log("结束拖动")
       
       // 移除临时事件监听
       document.removeEventListener('pointermove', el.handlePointerMove!)
@@ -223,13 +223,13 @@ export const vResizable: Directive = {
         const resizeHandles = wrapper ? wrapper.querySelectorAll('.resize-handle') : null
         
         if (resizeHandles && resizeHandles.length > 0) {
-          console.log("找到 resize 手柄:", resizeHandles.length)
+          // console.log("找到 resize 手柄:", resizeHandles.length)
           resizeHandles.forEach(handle => {
             handle.removeEventListener('pointerdown', el.handlePointerDown!)
             handle.addEventListener('pointerdown', el.handlePointerDown!)
           })
         } else {
-          console.log("未找到 resize 手柄")
+          // console.log("未找到 resize 手柄")
         }
       }, 100)
     }
