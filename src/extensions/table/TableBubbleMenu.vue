@@ -4,12 +4,8 @@
     :editor="editor"
     :tippy-options="{
       placement: 'top',
-      duration: 150,
-      arrow: false,
       offset: [0, 20],
-      hideOnClick: false,
-      interactive: true,
-      theme: 'custom',
+      theme: 'light',
     }"
     :should-show="shouldShow"
     class="table-bubble-menu-wrapper"
@@ -77,23 +73,6 @@ const props = defineProps<{
   editor: Editor | null;
 }>();
 
-// 自定义tippy主题
-onMounted(() => {
-  // 添加自定义CSS
-  const style = document.createElement("style");
-  style.textContent = `
-    .tippy-box[data-theme~='custom'] {
-      background-color: transparent;
-      border: none;
-      box-shadow: none;
-    }
-    .tippy-box[data-theme~='custom'] .tippy-content {
-      padding: 0;
-    }
-  `;
-  document.head.appendChild(style);
-});
-
 // 检查是否显示表格气泡菜单
 const shouldShow = ({ editor, view, state, oldState, from, to }: any) => {
   return editor.isActive("table");
@@ -157,8 +136,8 @@ const deleteTable = () => {
   display: flex;
   background-color: #fff;
   padding: 0;
-  border-radius: 6px;
-  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+//   border-radius: 6px;
+//   box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
   border: none;
 
   button {
