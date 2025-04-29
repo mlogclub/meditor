@@ -108,7 +108,6 @@ const nodeId = ref<string | null>(null)
 watch(
   imageAttributes,
   (attrs) => {
-    console.log('图片属性变化:', attrs)
     const width = attrs.width
     const height = attrs.height
     const alignment = attrs.alignment || 'center'
@@ -213,7 +212,6 @@ const updateSize = (type: 'width' | 'height', value: string) => {
   setTimeout(() => {
     const imgNode = document.querySelector(`img[data-node-id="${nodeId.value}"]`)
     if (imgNode) {
-      console.log('触发图片重绘', newWidth, newHeight)
       // 触发强制重绘
       ;(imgNode as HTMLElement).style.width = newWidth ? `${newWidth}px` : ''
       ;(imgNode as HTMLElement).style.height = newHeight ? `${newHeight}px` : ''
