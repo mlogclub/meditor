@@ -1,5 +1,5 @@
 <template>
-  <node-view-wrapper class="resizable-image-wrapper" :class="{ 'selected': selected }">
+  <node-view-wrapper class="resizable-image-wrapper" :class="{ 'selected': selected }" :style="imageStyle">
     <img
       ref="imageRef"
       :src="node.attrs.src"
@@ -183,8 +183,10 @@ const imageStyle = computed(() => {
 .resizable-image-wrapper {
   position: relative;
   display: inline-block;
-  max-width: 100%;
+  /* max-width: 100%; */
   line-height: 0;
+  display: block;
+  width: max-content;
 }
 
 .resizable-image-wrapper img {
