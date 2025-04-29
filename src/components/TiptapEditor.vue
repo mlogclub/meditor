@@ -48,18 +48,12 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: string): void;
-  (e: "image-upload-error", error: Error, file?: File): void;
 }>();
 
 const editorRef = ref<Editor | null>(null);
 
 // 将自定义图片上传函数提供给子组件
 provide('customImageUpload', props.customImageUpload)
-
-// 处理图片上传错误
-const handleImageUploadError = (error: Error, file?: File) => {
-  emit("image-upload-error", error, file);
-};
 
 const editor = useEditor({
   content: props.modelValue,

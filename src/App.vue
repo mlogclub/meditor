@@ -53,7 +53,6 @@ const handleImageUploadError = (error: Error, file?: File) => {
     <TiptapEditor 
       v-model="content" 
       :customImageUpload="customImageUpload"
-      @image-upload-error="handleImageUploadError"
     />
     <div v-text="content"></div>
   </div>
