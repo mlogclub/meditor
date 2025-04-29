@@ -278,7 +278,7 @@ const setAlignment = (alignment: string) => {
       margin-left: 0.5rem;
       
       span {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         color: #4b5563;
       }
       
@@ -287,7 +287,7 @@ const setAlignment = (alignment: string) => {
         padding: 0.15rem 0.25rem;
         border: 1px solid #e5e7eb;
         border-radius: 4px;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
       }
     }
   }
