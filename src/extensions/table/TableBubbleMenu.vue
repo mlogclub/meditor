@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 import { Editor, BubbleMenu } from "@tiptap/vue-3";
 import {
   LucideColumns,
@@ -136,8 +136,6 @@ const deleteTable = () => {
   display: flex;
   background-color: #fff;
   padding: 0;
-//   border-radius: 6px;
-//   box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
   border: none;
 
   button {

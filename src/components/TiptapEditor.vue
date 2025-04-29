@@ -2,7 +2,6 @@
   <div class="editor-container">
     <EditorToolbar :editor="editor" />
     <editor-content :editor="editor" class="editor-content" />
-    <TableBubbleMenu :editor="editor" v-if="editor" />
   </div>
 </template>
 
@@ -27,7 +26,6 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { CustomLink } from "@/extensions/link";
 import { SlashSuggestion } from "@/extensions/slash";
 import { TableExtensions } from "@/extensions/table";
-import TableBubbleMenu from "@/extensions/table/TableBubbleMenu.vue";
 import { ImageExtensions } from "@/extensions/image";
 
 import EditorToolbar from "@/components/toolbar/index.vue";
