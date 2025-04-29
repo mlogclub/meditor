@@ -24,7 +24,13 @@ import EditorToolbar from "./EditorToolbar.vue";
 import Placeholder from "@tiptap/extension-placeholder";
 import { TableExtensions } from "../extensions/table";
 import TableBubbleMenu from "../extensions/table/TableBubbleMenu.vue";
-import { ImageExtensions, pasteImagePlugin } from "../extensions/image";
+import { 
+  ImageExtensions, 
+  pasteImagePlugin, 
+  createImageDragAndDropPlugin,
+  pasteImagePluginKey,
+  imageDragDropPluginKey 
+} from "../extensions/image";
 
 import "tippy.js/dist/tippy.css";
 import "../styles/scrollbar.css";
@@ -84,25 +90,25 @@ const editor = useEditor({
   ],
   onCreate: ({ editor }) => {
     editorRef.value = editor;
+    // 添加粘贴图片和拖拽上传插件
+    editor.registerPlugin(pasteImagePlugin(props.customImageUpload));
+    editor.registerPlugin(createImageDragAndDropPlugin(props.customImageUpload));
   },
   onUpdate: ({ editor }) => {
     emit("update:modelValue", editor.getHTML());
-  },
-  editorProps: {
-    // 添加粘贴图片插件
-    handlePaste: (view, event, slice) => {
-      // 这里什么都不做，由插件处理粘贴
-      return false;
-    }
   }
 });
 
-// 添加粘贴图片插件
+// 监听自定义图片上传函数的变化
 watch(() => props.customImageUpload, (newValue) => {
   if (editor.value) {
+    // 移除旧插件，重新注册新插件
+    editor.value.unregisterPlugin(pasteImagePluginKey);
+    editor.value.unregisterPlugin(imageDragDropPluginKey);
     editor.value.registerPlugin(pasteImagePlugin(newValue));
+    editor.value.registerPlugin(createImageDragAndDropPlugin(newValue));
   }
-}, { immediate: true });
+});
 
 watch(
   () => props.modelValue,
