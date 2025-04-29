@@ -1,7 +1,11 @@
 import Image from '@tiptap/extension-image'
-import { mergeAttributes } from '@tiptap/core'
+import { mergeAttributes, Editor } from '@tiptap/core'
 import { VueNodeViewRenderer } from '@tiptap/vue-3'
 import ResizableImageNodeView from './ResizableImageNodeView.vue'
+import { BubbleMenu } from '@tiptap/extension-bubble-menu'
+import { Plugin, PluginKey, EditorState } from 'prosemirror-state'
+import ImageBubbleMenu from './ImageBubbleMenu.vue'
+import { createApp } from 'vue'
 
 export const ResizableImage = Image.extend({
   name: 'resizableImage',
@@ -68,7 +72,6 @@ export const ResizableImage = Image.extend({
           }
           return {
             'data-alignment': attributes.alignment,
-            'style': `display: block; margin: ${attributes.alignment === 'center' ? '0 auto' : attributes.alignment === 'left' ? '0 auto 0 0' : '0 0 0 auto'};`,
           }
         },
       },
@@ -80,19 +83,11 @@ export const ResizableImage = Image.extend({
   },
   
   renderHTML({ HTMLAttributes }) {
-    const { alignment } = HTMLAttributes
-    
-    // 根据对齐方式设置样式
-    const style = alignment
-      ? `display: block; margin: ${alignment === 'center' ? '0 auto' : alignment === 'left' ? '0 auto 0 0' : '0 0 0 auto'};`
-      : ''
-    
     return [
       'img',
       mergeAttributes(
         this.options.HTMLAttributes,
-        HTMLAttributes,
-        { style }
+        HTMLAttributes
       ),
     ]
   },
@@ -118,8 +113,6 @@ export const ResizableImage = Image.extend({
 })
 
 // 处理粘贴图片
-import { Plugin, PluginKey } from 'prosemirror-state'
-
 export function pasteImagePlugin(customImageUpload) {
   return new Plugin({
     key: new PluginKey('pasteImage'),
@@ -170,7 +163,77 @@ export function pasteImagePlugin(customImageUpload) {
   })
 }
 
+// 创建图片气泡菜单扩展
+export const ImageBubbleMenuExtension = BubbleMenu.extend({
+  name: 'imageBubbleMenu',
+  
+  addOptions() {
+    return {
+      ...this.parent?.(),
+      element: null,
+      tippyOptions: {
+        placement: 'top' as const,
+        theme: 'light',
+      },
+      shouldShow: ({ editor, state }: { 
+        editor: Editor, 
+        state: EditorState,
+        oldState?: EditorState,
+        from: number,
+        to: number
+      }) => {
+        // 检查选择是否为节点选择，以及是否选中了resizableImage节点
+        const { selection } = state
+        const { empty, $anchor } = selection
+        
+        if (!empty) return false
+        
+        const isResizableImage = $anchor.parent.type.name === 'resizableImage'
+          || editor.isActive('resizableImage')
+        
+        return isResizableImage
+      },
+    }
+  },
+
+  addProseMirrorPlugins() {
+    let appInstance: ReturnType<typeof createApp> | null = null
+    
+    // 在编辑器销毁时清理资源
+    this.editor.on('destroy', () => {
+      if (this.options.element) {
+        // 卸载Vue组件
+        if (appInstance) {
+          appInstance.unmount()
+        }
+        
+        // 移除DOM元素
+        if (this.options.element.parentNode) {
+          this.options.element.parentNode.removeChild(this.options.element)
+        }
+      }
+    })
+    
+    if (!this.options.element) {
+      // 动态创建Vue组件并挂载到DOM
+      const container = document.createElement('div')
+      document.body.appendChild(container)
+      
+      // 保存app实例以便后续清理
+      appInstance = createApp(ImageBubbleMenu, {
+        editor: this.editor,
+      })
+      
+      appInstance.mount(container)
+      this.options.element = container
+    }
+    
+    return this.parent?.()
+  },
+})
+
 // 主要导出
 export const ImageExtensions = [
   ResizableImage,
+  ImageBubbleMenuExtension,
 ] 

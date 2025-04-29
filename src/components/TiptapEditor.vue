@@ -3,7 +3,6 @@
     <EditorToolbar :editor="editor" />
     <editor-content :editor="editor" class="editor-content" />
     <TableBubbleMenu :editor="editor" v-if="editor" />
-    <ImageBubbleMenu :editor="editor" v-if="editor" />
   </div>
 </template>
 
@@ -26,7 +25,6 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { TableExtensions } from "../extensions/table";
 import TableBubbleMenu from "../extensions/table/TableBubbleMenu.vue";
 import { ImageExtensions, pasteImagePlugin } from "../extensions/image";
-import ImageBubbleMenu from "../extensions/image/ImageBubbleMenu.vue";
 
 import "tippy.js/dist/tippy.css";
 import "../styles/scrollbar.css";
