@@ -28,19 +28,6 @@ const customImageUpload = async (file: File): Promise<string> => {
     }, 500)
   })
 }
-
-// 提供自定义上传函数给所有子组件
-provide('customImageUpload', customImageUpload)
-
-// 处理图片上传错误
-const handleImageUploadError = (error: Error, file?: File) => {
-  uploadError.value = error.message
-  
-  // 3秒后自动清除错误
-  setTimeout(() => {
-    uploadError.value = null
-  }, 3000)
-}
 </script>
 
 <template>

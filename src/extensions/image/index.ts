@@ -3,13 +3,9 @@ import { mergeAttributes, Editor } from '@tiptap/core'
 import { VueNodeViewRenderer } from '@tiptap/vue-3'
 import ResizableImageNodeView from './ResizableImageNodeView.vue'
 import { BubbleMenu } from '@tiptap/extension-bubble-menu'
-import { Plugin, PluginKey, EditorState } from 'prosemirror-state'
+import { EditorState } from 'prosemirror-state'
 import ImageBubbleMenu from './ImageBubbleMenu.vue'
 import { createApp } from 'vue'
-
-// 插件Keys
-export const pasteImagePluginKey = new PluginKey('pasteImage')
-export const imageDragDropPluginKey = new PluginKey('imageDragDrop')
 
 export const ResizableImage = Image.extend({
   name: 'resizableImage',
@@ -116,57 +112,6 @@ export const ResizableImage = Image.extend({
   },
 })
 
-// 处理粘贴图片
-export function pasteImagePlugin(customImageUpload) {
-  return new Plugin({
-    key: pasteImagePluginKey,
-    props: {
-      handlePaste: (view, event) => {
-        const items = Array.from(event.clipboardData?.items || [])
-        const imageItems = items.filter(item => item.type.indexOf('image') === 0)
-        
-        if (imageItems.length === 0) {
-          return false
-        }
-        
-        event.preventDefault()
-        
-        imageItems.forEach(async item => {
-          const file = item.getAsFile()
-          if (!file) return
-          
-          let imageUrl
-          
-          try {
-            if (typeof customImageUpload === 'function') {
-              imageUrl = await customImageUpload(file)
-            } else {
-              // 如果没有自定义上传函数，则使用本地URL
-              imageUrl = URL.createObjectURL(file)
-            }
-            
-            if (imageUrl) {
-              const { schema } = view.state
-              const imageNode = schema.nodes.resizableImage.create({
-                src: imageUrl,
-                alignment: 'center',
-                id: `img-${Date.now()}`
-              })
-              
-              const transaction = view.state.tr.replaceSelectionWith(imageNode)
-              view.dispatch(transaction)
-            }
-          } catch (error) {
-            console.error('Failed to upload pasted image:', error)
-          }
-        })
-        
-        return true
-      }
-    }
-  })
-}
-
 // 创建图片气泡菜单扩展
 export const ImageBubbleMenuExtension = BubbleMenu.extend({
   name: 'imageBubbleMenu',
@@ -235,66 +180,6 @@ export const ImageBubbleMenuExtension = BubbleMenu.extend({
     return this.parent?.()
   },
 })
-
-// 创建图片拖拽上传插件
-export function createImageDragAndDropPlugin(customImageUpload) {
-  return new Plugin({
-    key: imageDragDropPluginKey,
-    props: {
-      handleDrop: (view, event, slice, moved) => {
-        // 如果是编辑器内部节点的移动，不拦截
-        if (moved) return false
-        
-        // 检查是否有文件被拖拽
-        const files = Array.from(event.dataTransfer?.files || [])
-        const imageFiles = files.filter(file => file.type.startsWith('image/'))
-        
-        if (imageFiles.length === 0) {
-          return false
-        }
-        
-        // 阻止默认行为
-        event.preventDefault()
-        
-        // 获取放置位置的坐标
-        const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY })
-        
-        if (!coordinates) return false
-        
-        // 处理每个图片文件
-        imageFiles.forEach(async file => {
-          let imageUrl
-          
-          try {
-            if (typeof customImageUpload === 'function') {
-              imageUrl = await customImageUpload(file)
-            } else {
-              // 如果没有自定义上传函数，则使用本地URL
-              imageUrl = URL.createObjectURL(file)
-            }
-            
-            if (imageUrl) {
-              const { schema } = view.state
-              const imageNode = schema.nodes.resizableImage.create({
-                src: imageUrl,
-                alignment: 'center',
-                id: `img-${Date.now()}`
-              })
-              
-              // 在放置位置插入图片节点
-              const transaction = view.state.tr.insert(coordinates.pos, imageNode)
-              view.dispatch(transaction)
-            }
-          } catch (error) {
-            console.error('Failed to upload dropped image:', error)
-          }
-        })
-        
-        return true
-      }
-    }
-  })
-}
 
 // 主要导出
 export const ImageExtensions = [

@@ -7,43 +7,46 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watch, computed, provide } from "vue";
+import "tippy.js/dist/tippy.css";
+import "@/styles/scrollbar.css";
+import "@/styles/resizable.css";
+
+import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { useEditor, EditorContent } from "@tiptap/vue-3";
 
+import { Editor } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
-import { CustomLink } from "../extensions/link";
 import Highlight from "@tiptap/extension-highlight";
-import { Editor } from "@tiptap/core";
 import { BubbleMenu } from "@tiptap/extension-bubble-menu";
 import { FloatingMenu } from "@tiptap/extension-floating-menu";
-import { SlashSuggestion } from "../extensions/slash";
-import EditorToolbar from "./EditorToolbar.vue";
 import Placeholder from "@tiptap/extension-placeholder";
-import { TableExtensions } from "../extensions/table";
-import TableBubbleMenu from "../extensions/table/TableBubbleMenu.vue";
-import { 
-  ImageExtensions, 
-  pasteImagePlugin, 
-  createImageDragAndDropPlugin,
-  pasteImagePluginKey,
-  imageDragDropPluginKey 
-} from "../extensions/image";
 
-import "tippy.js/dist/tippy.css";
-import "../styles/scrollbar.css";
-import "../styles/resizable.css";
+import { CustomLink } from "@/extensions/link";
+import { SlashSuggestion } from "@/extensions/slash";
+import { TableExtensions } from "@/extensions/table";
+import TableBubbleMenu from "@/extensions/table/TableBubbleMenu.vue";
+import { ImageExtensions } from "@/extensions/image";
+
+import EditorToolbar from "@/components/toolbar/index.vue";
+
+import {
+  PluginPasteImage,
+  PluginImageDragAndDrop,
+  PluginKeyPasteImage,
+  PluginKeyImageDragDrop,
+} from "@/plugins/image";
 
 const props = defineProps<{
   modelValue: string;
-  // 自定义图片上传函数，可选
-  customImageUpload?: (file: File) => Promise<string>;
   // 最大允许上传的文件大小（单位：字节），默认为5MB
   maxImageSize?: number;
   // 允许的图片格式，默认为常见图片格式
   acceptImageTypes?: string[];
+  // 自定义图片上传函数，可选
+  customImageUpload?: (file: File) => Promise<string>;
 }>();
 
 const emit = defineEmits<{
@@ -51,9 +54,6 @@ const emit = defineEmits<{
 }>();
 
 const editorRef = ref<Editor | null>(null);
-
-// 将自定义图片上传函数提供给子组件
-provide('customImageUpload', props.customImageUpload)
 
 const editor = useEditor({
   content: props.modelValue,
@@ -84,25 +84,39 @@ const editor = useEditor({
   ],
   onCreate: ({ editor }) => {
     editorRef.value = editor;
-    // 添加粘贴图片和拖拽上传插件
-    editor.registerPlugin(pasteImagePlugin(props.customImageUpload));
-    editor.registerPlugin(createImageDragAndDropPlugin(props.customImageUpload));
+    registerPlugins();
   },
   onUpdate: ({ editor }) => {
     emit("update:modelValue", editor.getHTML());
-  }
+  },
 });
 
-// 监听自定义图片上传函数的变化
-watch(() => props.customImageUpload, (newValue) => {
-  if (editor.value) {
-    // 移除旧插件，重新注册新插件
-    editor.value.unregisterPlugin(pasteImagePluginKey);
-    editor.value.unregisterPlugin(imageDragDropPluginKey);
-    editor.value.registerPlugin(pasteImagePlugin(newValue));
-    editor.value.registerPlugin(createImageDragAndDropPlugin(newValue));
+const registerPlugins = () => {
+  if (!editorRef.value) {
+    return;
   }
-});
+  editorRef.value.registerPlugin(PluginPasteImage(props.customImageUpload));
+  editorRef.value.registerPlugin(
+    PluginImageDragAndDrop(props.customImageUpload)
+  );
+};
+
+const unregisterPlugins = () => {
+  if (!editorRef.value) {
+    return;
+  }
+  editorRef.value.unregisterPlugin(PluginKeyPasteImage);
+  editorRef.value.unregisterPlugin(PluginKeyImageDragDrop);
+};
+
+// 监听自定义图片上传函数的变化
+watch(
+  () => props.customImageUpload,
+  (newValue) => {
+    unregisterPlugins();
+    registerPlugins();
+  }
+);
 
 watch(
   () => props.modelValue,
@@ -171,7 +185,7 @@ onBeforeUnmount(() => {
       height: 0;
       pointer-events: none;
     }
-    
+
     /* 表格样式 */
     table {
       border-collapse: collapse;
@@ -180,31 +194,32 @@ onBeforeUnmount(() => {
       width: 100%;
       table-layout: fixed;
       border-radius: 4px;
-      
+
       &.has-focus {
         outline: 2px solid #60a5fa;
         outline-offset: 2px;
       }
-      
-      td, th {
+
+      td,
+      th {
         border: 1px solid #e5e7eb;
         box-sizing: border-box;
         min-width: 1em;
         padding: 0.5em;
         position: relative;
         vertical-align: top;
-        
+
         > * {
           margin-bottom: 0;
         }
       }
-      
+
       th {
         background-color: #f9fafb;
         font-weight: bold;
         text-align: left;
       }
-      
+
       .selectedCell:after {
         background: rgba(200, 200, 255, 0.4);
         content: "";
@@ -217,16 +232,16 @@ onBeforeUnmount(() => {
         z-index: 2;
       }
     }
-    
+
     /* 可调整大小的图片样式 */
     .resizable-image {
       position: relative;
       max-width: 100%;
       display: inline-block;
-      
+
       &:hover {
         &::after {
-          content: '';
+          content: "";
           position: absolute;
           top: 0;
           left: 0;
@@ -236,18 +251,18 @@ onBeforeUnmount(() => {
           pointer-events: none;
         }
       }
-      
+
       /* 对齐方式样式 */
       &[data-alignment="center"] {
         display: block;
         margin: 0 auto;
       }
-      
+
       &[data-alignment="left"] {
         display: block;
         margin: 0 auto 0 0;
       }
-      
+
       &[data-alignment="right"] {
         display: block;
         margin: 0 0 0 auto;
@@ -261,26 +276,27 @@ onBeforeUnmount(() => {
     p.is-editor-empty:first-child::before {
       color: #6b7280;
     }
-    
+
     /* 暗色主题的表格样式 */
     table {
       th {
         background-color: #374151;
       }
-      
-      td, th {
+
+      td,
+      th {
         border-color: #4b5563;
       }
-      
+
       .selectedCell:after {
         background: rgba(100, 100, 150, 0.4);
       }
-      
+
       &.has-focus {
         outline-color: #3b82f6;
       }
     }
-    
+
     /* 暗色主题下的可调整大小图片样式 */
     .resizable-image {
       &:hover {
