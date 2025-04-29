@@ -1,12 +1,11 @@
 import { Extension } from '@tiptap/core'
-import { Plugin, PluginKey } from 'prosemirror-state'
+import { Plugin, PluginKey, EditorState } from 'prosemirror-state'
 import Table from '@tiptap/extension-table'
 import TableRow from '@tiptap/extension-table-row'
 import TableHeader from '@tiptap/extension-table-header'
 import TableCell from '@tiptap/extension-table-cell'
 import TableBubbleMenu from './TableBubbleMenu.vue'
 import { BubbleMenu } from '@tiptap/extension-bubble-menu'
-import { EditorState } from 'prosemirror-state'
 import { Editor } from '@tiptap/core'
 import { createApp } from 'vue'
 
