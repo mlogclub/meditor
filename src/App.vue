@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import TiptapEditor from './components/TiptapEditor.vue'
-import { ref, provide } from 'vue'
+import MEditor from './components/MEditor.vue'
+import { ref } from 'vue'
 
 const content = ref('')
-const uploadError = ref<string | null>(null)
 
 // 模拟自定义图片上传函数
 const customImageUpload = async (file: File): Promise<string> => {
@@ -32,12 +31,7 @@ const customImageUpload = async (file: File): Promise<string> => {
 
 <template>
   <div class="app">
-    <!-- 显示错误消息 -->
-    <div class="upload-error" v-if="uploadError">
-      {{ uploadError }}
-    </div>
-    
-    <TiptapEditor 
+    <MEditor 
       v-model="content" 
       :customImageUpload="customImageUpload"
     />
@@ -51,22 +45,5 @@ const customImageUpload = async (file: File): Promise<string> => {
   margin: 0 auto;
   padding: 1rem;
   position: relative;
-}
-
-.upload-error {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  background: #ef4444;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  z-index: 1000;
-  animation: fade-in 0.3s ease;
-}
-
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 </style>

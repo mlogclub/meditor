@@ -137,15 +137,13 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 .editor-container {
-  border: 1px solid #e5e7eb;
   border-radius: 2px;
-  margin: 1rem;
   background: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  // box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   height: 600px;
-  position: relative;
 }
 
 .editor-dropzone {
