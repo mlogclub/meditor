@@ -7,8 +7,8 @@
 
 <script setup lang="ts">
 import "tippy.js/dist/tippy.css";
-import "@/styles/scrollbar.css";
-import "@/styles/resizable.css";
+import "../styles/scrollbar.css";
+import "../styles/resizable.css";
 
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { useEditor, EditorContent } from "@tiptap/vue-3";
@@ -23,19 +23,19 @@ import { BubbleMenu } from "@tiptap/extension-bubble-menu";
 import { FloatingMenu } from "@tiptap/extension-floating-menu";
 import Placeholder from "@tiptap/extension-placeholder";
 
-import { CustomLink } from "@/extensions/link";
-import { SlashSuggestion } from "@/extensions/slash";
-import { TableExtensions } from "@/extensions/table";
-import { ImageExtensions } from "@/extensions/image";
+import { CustomLink } from "../extensions/link";
+import { SlashSuggestion } from "../extensions/slash";
+import { TableExtensions } from "../extensions/table";
+import { ImageExtensions } from "../extensions/image";
 
-import EditorToolbar from "@/components/toolbar/index.vue";
+import EditorToolbar from "./toolbar/index.vue";
 
 import {
   PluginPasteImage,
   PluginImageDragAndDrop,
   PluginKeyPasteImage,
   PluginKeyImageDragDrop,
-} from "@/plugins/image";
+} from "../plugins/image";
 
 const props = defineProps<{
   modelValue: string;
