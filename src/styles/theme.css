@@ -35,7 +35,7 @@
 }
 
 /* 手动设置暗色主题的类 */
-html.dark {
+html.dark, html.theme-dark {
   --editor-bg: #2d2d2d;
   --editor-border: #4a4a4a;
   --editor-text: #e5e7eb;
