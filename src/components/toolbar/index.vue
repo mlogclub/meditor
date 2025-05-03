@@ -27,7 +27,7 @@
       <BackgroundColorButton :editor="editor" />
     </div>
     <div class="editor-toolbar-btns editor-toolbar-right">
-      <!-- TODO 切换全屏 -->
+      <FullscreenButton :editor="editor" />
     </div>
   </div>
 </template>
@@ -54,6 +54,7 @@ import AlignRightButton from "./AlignRightButton.vue";
 import TextColorButton from "./TextColorButton.vue";
 import BackgroundColorButton from "./BackgroundColorButton.vue";
 import TableButton from "./TableButton.vue";
+import FullscreenButton from "./FullscreenButton.vue";
 
 defineProps<{
   editor: Editor | null | undefined;
