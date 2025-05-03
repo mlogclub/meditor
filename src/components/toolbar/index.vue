@@ -58,7 +58,8 @@ defineProps<{
 <style lang="scss">
 .editor-toolbar {
   padding: 0.25rem 0.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--editor-border);
+  background: var(--editor-toolbar-bg);
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;

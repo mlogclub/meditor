@@ -106,8 +106,8 @@ const deleteTable = () => {
 <style lang="scss" scoped>
 .table-menu {
   position: absolute;
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--editor-bg);
+  border: 1px solid var(--editor-border);
   border-radius: 6px;
   padding: 6px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -123,25 +123,25 @@ const deleteTable = () => {
     
     button {
       padding: 4px;
-      background: white;
-      border: 1px solid #e5e7eb;
+      background: var(--editor-bg);
+      border: 1px solid var(--editor-border);
       border-radius: 4px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #4b5563;
+      color: var(--editor-text);
       
       &:hover {
-        background: #f3f4f6;
-        color: #1f2937;
+        background: var(--editor-hover);
+        color: var(--editor-text);
         transform: translateY(-1px);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
       }
       
       &.active {
-        background: #e5e7eb;
-        color: #1f2937;
+        background: var(--editor-hover);
+        color: var(--editor-text);
       }
       
       &:active {

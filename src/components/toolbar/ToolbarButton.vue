@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue'
 import tippy from 'tippy.js'
 import type { Instance as TippyInstance } from 'tippy.js'
 
@@ -25,6 +25,14 @@ const emit = defineEmits<{
 const buttonRef = ref<HTMLElement | null>(null)
 let tippyInstance: TippyInstance | null = null
 
+// 根据系统偏好动态设置tippy主题
+const tippyTheme = computed(() => {
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    return 'dark'
+  }
+  return 'light'
+})
+
 const onClick = (event: MouseEvent) => {
   emit('click', event)
 }
@@ -35,8 +43,25 @@ onMounted(() => {
       content: props.title,
       placement: 'bottom',
       arrow: true,
-      theme: 'light',
+      theme: tippyTheme.value,
       duration: [200, 100]
+    })
+  }
+  
+  // 监听系统主题变化
+  if (window.matchMedia) {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleThemeChange = (e: MediaQueryListEvent) => {
+      if (tippyInstance) {
+        tippyInstance.setProps({ theme: e.matches ? 'dark' : 'light' })
+      }
+    }
+    
+    mediaQuery.addEventListener('change', handleThemeChange)
+    
+    // 在组件卸载前移除监听器
+    onBeforeUnmount(() => {
+      mediaQuery.removeEventListener('change', handleThemeChange)
     })
   }
 })
@@ -57,10 +82,9 @@ onBeforeUnmount(() => {
 <style scoped>
 button {
   padding: 0.25rem;
-  /* border: 1px solid #e5e7eb; */
   border: none;
   border-radius: 4px;
-  background: white;
+  background: var(--editor-bg);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -68,21 +92,21 @@ button {
   width: 24px;
   height: 24px;
   transition: all 0.2s ease;
-  color: #4b5563;
+  color: var(--editor-text);
 }
 
 button:hover {
-  background: #f3f4f6;
-  border-color: #d1d5db;
-  color: #1f2937;
+  background: var(--editor-hover);
+  border-color: var(--editor-border);
+  color: var(--editor-text);
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 button.is-active {
-  background: #e5e7eb;
-  border-color: #d1d5db;
-  color: #1f2937;
+  background: var(--editor-hover);
+  border-color: var(--editor-border);
+  color: var(--editor-text);
   font-weight: 500;
 }
 

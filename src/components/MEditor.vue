@@ -9,6 +9,7 @@
 import "tippy.js/dist/tippy.css";
 import "../styles/scrollbar.css";
 import "../styles/resizable.css";
+import "../styles/theme.css";
 
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { useEditor, EditorContent } from "@tiptap/vue-3";
@@ -138,8 +139,8 @@ onBeforeUnmount(() => {
 <style lang="scss">
 .editor-container {
   border-radius: 2px;
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--editor-bg);
+  border: 1px solid var(--editor-border);
   // box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
@@ -153,29 +154,25 @@ onBeforeUnmount(() => {
 }
 
 .editor-content {
-  background: white;
+  background: var(--editor-bg);
   border-radius: 0 0 8px 8px;
   flex: 1;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   scrollbar-width: thin;
-  scrollbar-color: #c1c1c1 #f1f1f1;
+  scrollbar-color: var(--editor-scrollbar-thumb) var(--editor-scrollbar-track);
   height: 100%;
-
-  /* 暗色主题滚动条 */
-  .dark & {
-    scrollbar-color: #4a4a4a #2d2d2d;
-  }
 
   .ProseMirror {
     flex: 1;
     outline: none;
     padding: 1rem;
+    color: var(--editor-text);
 
     /* Placeholder样式 */
     p.is-editor-empty:first-child::before {
-      color: #adb5bd;
+      color: var(--editor-placeholder);
       content: attr(data-placeholder);
       float: left;
       height: 0;
@@ -192,13 +189,13 @@ onBeforeUnmount(() => {
       border-radius: 4px;
 
       &.has-focus {
-        outline: 2px solid #60a5fa;
+        outline: 2px solid var(--editor-focus);
         outline-offset: 2px;
       }
 
       td,
       th {
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--editor-table-border);
         box-sizing: border-box;
         min-width: 1em;
         padding: 0.5em;
@@ -211,13 +208,13 @@ onBeforeUnmount(() => {
       }
 
       th {
-        background-color: #f9fafb;
+        background-color: var(--editor-table-header);
         font-weight: bold;
         text-align: left;
       }
 
       .selectedCell:after {
-        background: rgba(200, 200, 255, 0.4);
+        background: var(--editor-selection);
         content: "";
         left: 0;
         right: 0;
@@ -243,7 +240,7 @@ onBeforeUnmount(() => {
           left: 0;
           right: 0;
           bottom: 0;
-          border: 2px solid #60a5fa;
+          border: 2px solid var(--editor-focus);
           pointer-events: none;
         }
       }

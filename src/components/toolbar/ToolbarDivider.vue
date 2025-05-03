@@ -6,7 +6,7 @@
 .divider {
   width: 1px;
   height: 20px;
-  background: #e5e7eb;
+  background: var(--editor-border);
   margin: 0 0.25rem;
 }
 </style> 
